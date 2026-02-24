@@ -25,6 +25,7 @@ class TrackPayload {
     this.appVersion,
     this.sdkVersion,
     this.sdkName,
+    this.deviceModel,
   });
 
   final EventType type;
@@ -49,6 +50,7 @@ class TrackPayload {
   final String? appVersion;
   final String? sdkVersion;
   final String? sdkName;
+  final String? deviceModel;
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
@@ -75,6 +77,7 @@ class TrackPayload {
     if (appVersion != null) json['app_version'] = appVersion;
     if (sdkVersion != null) json['sdk_version'] = sdkVersion;
     if (sdkName != null) json['sdk_name'] = sdkName;
+    if (deviceModel != null) json['device_model'] = deviceModel;
     return json;
   }
 
@@ -107,6 +110,7 @@ class TrackPayload {
       appVersion: json['app_version'] as String?,
       sdkVersion: json['sdk_version'] as String?,
       sdkName: json['sdk_name'] as String?,
+      deviceModel: json['device_model'] as String?,
     );
   }
 }
