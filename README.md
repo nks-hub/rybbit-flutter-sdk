@@ -27,7 +27,8 @@ Track screen views, custom events, errors, and user identification from Flutter 
 
 - **Screen view tracking** - automatic via `NavigatorObserver` or manual
 - **Custom events** - with typed properties
-- **Error tracking** - capture errors with stack traces
+- **Automatic error tracking** - captures Flutter framework errors, async exceptions, and zone errors
+- **Manual error tracking** - `trackError()` with stack traces and context
 - **User identification** - `identify()` with traits, backfills 30 days
 - **GA4-style typed events** - 23 pre-built methods (e-commerce, auth, engagement, CMS, lead gen)
 - **Persistent offline queue** - Hive-backed, survives app restarts
@@ -51,18 +52,20 @@ dependencies:
 import 'package:flutter/material.dart';
 import 'package:rybbit_flutter/rybbit_flutter.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  Rybbit.runApp(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  await Rybbit.init(
-    host: 'https://your-rybbit-instance.com',
-    siteId: 'your-site-id',
-  );
+    await Rybbit.init(
+      host: 'https://your-rybbit-instance.com',
+      siteId: 'your-site-id',
+    );
 
-  runApp(MaterialApp(
-    navigatorObservers: [RybbitNavigatorObserver()],
-    home: const HomeScreen(),
-  ));
+    runApp(MaterialApp(
+      navigatorObservers: [RybbitNavigatorObserver()],
+      home: const HomeScreen(),
+    ));
+  });
 }
 ```
 

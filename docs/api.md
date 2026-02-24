@@ -21,6 +21,7 @@ static Future<void> init({
   bool debug = false,
   bool dryRun = false,
   bool autoTrackLifecycle = true,
+  bool autoTrackErrors = true,
   Map<String, dynamic> globalProperties = const {},
   int maxOfflineEvents = 1000,
   int offlineTtlDays = 7,
@@ -41,6 +42,7 @@ static Future<void> init({
 | `debug` | `bool` | `false` | Enables verbose `[Rybbit]` log output via `debugPrint` |
 | `dryRun` | `bool` | `false` | Logs events locally without sending any HTTP requests |
 | `autoTrackLifecycle` | `bool` | `true` | Automatically tracks `app_open`, `app_foreground`, `app_background` |
+| `autoTrackErrors` | `bool` | `true` | Automatically captures Flutter framework errors and uncaught async exceptions |
 | `globalProperties` | `Map<String, dynamic>` | `{}` | Properties merged into every event |
 | `maxOfflineEvents` | `int` | `1000` | Maximum number of events stored in the offline Hive queue |
 | `offlineTtlDays` | `int` | `7` | Days after which offline events expire and are discarded |
@@ -71,6 +73,31 @@ Returns `true` if the SDK is initialized and ready.
 ```dart
 static bool get isInitialized
 ```
+
+#### `Rybbit.runApp()`
+
+Wraps your app startup with `runZonedGuarded` for comprehensive error capture. Catches errors that occur outside Flutter's error handlers (e.g. in isolates or raw Dart code).
+
+```dart
+static void runApp(Future<void> Function() appRunner)
+```
+
+**Usage:**
+
+```dart
+void main() {
+  Rybbit.runApp(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Rybbit.init(host: 'https://...', siteId: '1');
+    runApp(const MyApp());
+  });
+}
+```
+
+This provides three layers of error capture:
+1. `FlutterError.onError` — framework errors (widget build, layout, etc.)
+2. `PlatformDispatcher.instance.onError` — uncaught async exceptions
+3. `runZonedGuarded` — zone-level errors not caught by the above
 
 #### `Rybbit.reset()`
 
@@ -227,7 +254,7 @@ void removeGlobalProperty(String key)
 
 #### `dispose()`
 
-Shuts down the SDK: cancels timers, flushes buffer, closes offline store, unregisters lifecycle observer.
+Shuts down the SDK: cancels timers, flushes buffer, closes offline store, unregisters lifecycle observer, uninstalls error handlers.
 
 ```dart
 Future<void> dispose()
@@ -263,6 +290,29 @@ MaterialApp(
 
 ---
 
+## RybbitErrorHandler
+
+Automatic error capture service. Hooks into Flutter's error reporting system to track errors without manual instrumentation.
+
+```dart
+class RybbitErrorHandler {
+  RybbitErrorHandler({required void Function(Object, StackTrace?) onError});
+
+  void install();    // Hooks into FlutterError.onError and PlatformDispatcher.instance.onError
+  void uninstall();  // Restores previous handlers
+}
+```
+
+**Captured error sources:**
+- `FlutterError.onError` — Framework errors (widget build failures, layout errors, rendering errors)
+- `PlatformDispatcher.instance.onError` — Uncaught async exceptions (unhandled Future errors)
+
+Previous handlers are preserved and called after tracking, so existing error handling is not disrupted.
+
+Installed automatically when `autoTrackErrors: true` (default). Uninstalled on `dispose()`.
+
+---
+
 ## RybbitConfig
 
 Immutable configuration class. Created internally by `Rybbit.init()`.
@@ -274,6 +324,7 @@ class RybbitConfig {
   final bool debug;
   final bool dryRun;
   final bool autoTrackLifecycle;
+  final bool autoTrackErrors;
   final Map<String, dynamic> globalProperties;
   final int maxOfflineEvents;
   final int offlineTtlDays;

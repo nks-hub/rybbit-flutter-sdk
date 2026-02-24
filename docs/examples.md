@@ -32,6 +32,7 @@ await Rybbit.init(
   siteId: 'my-app',
   debug: true,                                    // Verbose logging
   autoTrackLifecycle: true,                        // app_open, app_foreground, app_background
+  autoTrackErrors: true,                           // Auto capture Flutter/async errors
   globalProperties: {'app_variant': 'beta'},       // Attached to every event
   maxOfflineEvents: 500,                           // Max offline queue size
   offlineTtlDays: 3,                               // Offline events expire in 3 days
@@ -188,31 +189,35 @@ void _toggleDarkMode() {
 
 ## Error Tracking
 
-### Global Error Handler
+### Automatic Error Tracking (Default)
+
+Error tracking is enabled by default (`autoTrackErrors: true`). The SDK automatically captures:
+- Flutter framework errors (`FlutterError.onError`)
+- Uncaught async exceptions (`PlatformDispatcher.instance.onError`)
+
+For comprehensive coverage, wrap your app with `Rybbit.runApp()` to also capture zone-level errors:
 
 ```dart
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Rybbit.init(host: 'https://analytics.example.com', siteId: 'my-app');
-
-  // Catch Flutter framework errors
-  FlutterError.onError = (details) {
-    Rybbit.instance.trackError(
-      details.exception,
-      details.stack,
-      context: {'source': 'flutter_error', 'library': details.library ?? 'unknown'},
+void main() {
+  Rybbit.runApp(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Rybbit.init(
+      host: 'https://analytics.example.com',
+      siteId: 'my-app',
     );
-    FlutterError.presentError(details);
-  };
-
-  // Catch uncaught async errors
-  runZonedGuarded(
-    () => runApp(const MyApp()),
-    (error, stack) {
-      Rybbit.instance.trackError(error, stack, context: {'source': 'zone_error'});
-    },
-  );
+    runApp(const MyApp());
+  });
 }
+```
+
+### Disabling Automatic Error Tracking
+
+```dart
+await Rybbit.init(
+  host: 'https://analytics.example.com',
+  siteId: 'my-app',
+  autoTrackErrors: false,  // Disable automatic capture
+);
 ```
 
 ### Try-Catch Error Tracking
