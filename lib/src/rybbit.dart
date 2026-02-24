@@ -14,6 +14,7 @@ import 'services/offline_store.dart';
 import 'services/session.dart';
 import 'services/lifecycle.dart';
 import 'services/logger.dart';
+import 'services/error_handler.dart';
 
 enum RybbitState { idle, initializing, ready, disposed }
 
@@ -39,6 +40,7 @@ class Rybbit {
   late EventQueue _preInitQueue;
   OfflineEventStore? _offlineStore;
   RybbitLifecycleObserver? _lifecycleObserver;
+  RybbitErrorHandler? _errorHandler;
   Timer? _flushTimer;
   final List<TrackPayload> _buffer = [];
   String? _userId;
@@ -55,6 +57,7 @@ class Rybbit {
     bool debug = false,
     bool dryRun = false,
     bool autoTrackLifecycle = true,
+    bool autoTrackErrors = true,
     Map<String, dynamic> globalProperties = const {},
     int maxOfflineEvents = 1000,
     int offlineTtlDays = 7,
@@ -80,6 +83,7 @@ class Rybbit {
       debug: debug,
       dryRun: dryRun,
       autoTrackLifecycle: autoTrackLifecycle,
+      autoTrackErrors: autoTrackErrors,
       globalProperties: globalProperties,
       maxOfflineEvents: maxOfflineEvents,
       offlineTtlDays: offlineTtlDays,
@@ -146,6 +150,14 @@ class Rybbit {
       rybbit.event('app_open');
     }
 
+    if (autoTrackErrors) {
+      rybbit._errorHandler = RybbitErrorHandler(
+        onError: (error, stackTrace) => rybbit.trackError(error, stackTrace),
+      );
+      rybbit._errorHandler!.install();
+      rybbit._logger.log('Auto error tracking enabled');
+    }
+
     rybbit._logger.log('SDK ready');
   }
 
@@ -154,6 +166,32 @@ class Rybbit {
       await _instance!.dispose();
     }
     _instance = null;
+  }
+
+  /// Wraps the app startup with [runZonedGuarded] for comprehensive error
+  /// capture. Catches errors that occur outside Flutter's error handlers.
+  ///
+  /// Usage:
+  /// ```dart
+  /// void main() {
+  ///   Rybbit.runApp(() async {
+  ///     WidgetsFlutterBinding.ensureInitialized();
+  ///     await Rybbit.init(host: 'https://...', siteId: '1');
+  ///     runApp(const MyApp());
+  ///   });
+  /// }
+  /// ```
+  static void runApp(Future<void> Function() appRunner) {
+    runZonedGuarded(
+      () async {
+        await appRunner();
+      },
+      (error, stackTrace) {
+        if (_instance != null && _instance!._state == RybbitState.ready) {
+          _instance!.trackError(error, stackTrace);
+        }
+      },
+    );
   }
 
   // --- Core Tracking ---
@@ -350,6 +388,7 @@ class Rybbit {
     _state = RybbitState.disposed;
     _flushTimer?.cancel();
     _lifecycleObserver?.unregister();
+    _errorHandler?.uninstall();
     _connectivitySubscription?.cancel();
     await _flushBuffer();
     if (_offlineStore != null) {

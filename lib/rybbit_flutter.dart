@@ -6,3 +6,4 @@ export 'src/models/track_payload.dart';
 export 'src/models/identify_payload.dart';
 export 'src/navigator_observer.dart';
 export 'src/rybbit.dart';
+export 'src/services/error_handler.dart';

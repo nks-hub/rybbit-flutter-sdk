@@ -5,6 +5,7 @@ class RybbitConfig {
     this.debug = false,
     this.dryRun = false,
     this.autoTrackLifecycle = true,
+    this.autoTrackErrors = true,
     this.globalProperties = const {},
     this.maxOfflineEvents = 1000,
     this.offlineTtlDays = 7,
@@ -18,6 +19,7 @@ class RybbitConfig {
   final bool debug;
   final bool dryRun;
   final bool autoTrackLifecycle;
+  final bool autoTrackErrors;
   final Map<String, dynamic> globalProperties;
   final int maxOfflineEvents;
   final int offlineTtlDays;

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:rybbit_flutter/rybbit_flutter.dart';
@@ -59,6 +60,7 @@ void main() {
   Future<void> initRybbit({
     bool dryRun = false,
     bool autoTrackLifecycle = false,
+    bool autoTrackErrors = false,
   }) async {
     await Rybbit.init(
       host: 'https://test.example.com',
@@ -66,6 +68,7 @@ void main() {
       debug: true,
       dryRun: dryRun,
       autoTrackLifecycle: autoTrackLifecycle,
+      autoTrackErrors: autoTrackErrors,
       flushThreshold: 1,
       transport: mockTransport,
       deviceInfoProvider: MockDeviceInfo(),
@@ -210,6 +213,60 @@ void main() {
 
       final offlineCount = await offlineStore.count;
       expect(offlineCount, greaterThan(0));
+    });
+  });
+
+  group('auto error tracking', () {
+    test('captures FlutterError when autoTrackErrors is true', () async {
+      await initRybbit(autoTrackErrors: true);
+
+      // Clear any events captured during init (e.g. MissingPluginException from Hive in test env)
+      mockTransport.sentEvents.clear();
+
+      FlutterError.onError!(FlutterErrorDetails(
+        exception: StateError('auto tracked error'),
+        stack: StackTrace.current,
+      ));
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      final errorEvents = mockTransport.sentEvents
+          .where((e) => e.type == EventType.error && e.eventName == 'StateError')
+          .toList();
+      expect(errorEvents, hasLength(1));
+      expect(
+        errorEvents.first.properties!['message'],
+        contains('auto tracked error'),
+      );
+    });
+
+    test('does not capture errors when autoTrackErrors is false', () async {
+      await initRybbit(autoTrackErrors: false);
+
+      final previousHandler = FlutterError.onError;
+      // No Rybbit handler should be installed
+      FlutterError.onError!(FlutterErrorDetails(
+        exception: StateError('should not track'),
+        stack: StackTrace.current,
+      ));
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Only manual errors should be tracked, not auto-captured
+      expect(
+        mockTransport.sentEvents.where((e) => e.type == EventType.error),
+        isEmpty,
+      );
+    });
+
+    test('uninstalls error handler on dispose', () async {
+      await initRybbit(autoTrackErrors: true);
+      final handlerDuringInit = FlutterError.onError;
+
+      await Rybbit.reset();
+
+      // After dispose, FlutterError.onError should be restored
+      expect(FlutterError.onError, isNot(equals(handlerDuringInit)));
     });
   });
 }
