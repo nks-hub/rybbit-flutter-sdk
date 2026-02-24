@@ -275,6 +275,9 @@ class Rybbit {
       userAgent: _deviceData.userAgent,
       eventName: eventName,
       properties: properties,
+      appVersion: _deviceData.appVersion,
+      sdkVersion: _deviceData.sdkVersion,
+      sdkName: 'rybbit-flutter',
     );
   }
 
