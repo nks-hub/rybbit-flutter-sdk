@@ -319,8 +319,6 @@ class Rybbit {
       eventName: eventName,
       properties: properties,
       appVersion: _deviceData.appVersion,
-      sdkVersion: _deviceData.sdkVersion,
-      sdkName: '@nks-hub/rybbit_flutter',
       deviceModel: _deviceData.deviceModel,
     );
   }

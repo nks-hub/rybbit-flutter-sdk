@@ -23,8 +23,6 @@ class TrackPayload {
     this.fcp,
     this.ttfb,
     this.appVersion,
-    this.sdkVersion,
-    this.sdkName,
     this.deviceModel,
   });
 
@@ -48,8 +46,6 @@ class TrackPayload {
   final double? fcp;
   final double? ttfb;
   final String? appVersion;
-  final String? sdkVersion;
-  final String? sdkName;
   final String? deviceModel;
 
   Map<String, dynamic> toJson() {
@@ -75,8 +71,6 @@ class TrackPayload {
     if (fcp != null) json['fcp'] = fcp;
     if (ttfb != null) json['ttfb'] = ttfb;
     if (appVersion != null) json['app_version'] = appVersion;
-    if (sdkVersion != null) json['sdk_version'] = sdkVersion;
-    if (sdkName != null) json['sdk_name'] = sdkName;
     if (deviceModel != null) json['device_model'] = deviceModel;
     return json;
   }
@@ -108,8 +102,6 @@ class TrackPayload {
       fcp: (json['fcp'] as num?)?.toDouble(),
       ttfb: (json['ttfb'] as num?)?.toDouble(),
       appVersion: json['app_version'] as String?,
-      sdkVersion: json['sdk_version'] as String?,
-      sdkName: json['sdk_name'] as String?,
       deviceModel: json['device_model'] as String?,
     );
   }
