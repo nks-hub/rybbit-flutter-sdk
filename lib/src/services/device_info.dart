@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class DeviceData {
   const DeviceData({
+    required this.appName,
     required this.packageName,
     required this.appVersion,
     required this.sdkVersion,
@@ -17,6 +18,7 @@ class DeviceData {
     required this.language,
   });
 
+  final String appName;
   final String packageName;
   final String appVersion;
   final String sdkVersion;
@@ -27,8 +29,10 @@ class DeviceData {
   final int screenHeight;
   final String language;
 
+  /// RFC 7231 §5.5.3 compliant User-Agent string.
+  /// Format: AppName/AppVersion (packageName; Platform OSVersion; deviceModel) RybbitFlutter/SDKVersion
   String get userAgent =>
-      'RybbitFlutter/$sdkVersion ($platform $osVersion; $deviceModel)';
+      '$appName/$appVersion ($packageName; $platform $osVersion; $deviceModel) RybbitFlutter/$sdkVersion';
 }
 
 abstract class DeviceInfoProvider {
@@ -36,7 +40,7 @@ abstract class DeviceInfoProvider {
 }
 
 class DeviceInfoService implements DeviceInfoProvider {
-  static const String _sdkVersion = '0.1.0';
+  static const String _sdkVersion = '0.2.0';
 
   @override
   Future<DeviceData> collect() async {
@@ -87,6 +91,7 @@ class DeviceInfoService implements DeviceInfoProvider {
     final screenSize = display.physicalSize;
 
     return DeviceData(
+      appName: packageInfo.appName,
       packageName: packageInfo.packageName,
       appVersion: packageInfo.version,
       sdkVersion: _sdkVersion,

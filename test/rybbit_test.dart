@@ -27,9 +27,10 @@ class MockTransport implements RybbitTransport {
 class MockDeviceInfo implements DeviceInfoProvider {
   @override
   Future<DeviceData> collect() async => const DeviceData(
+        appName: 'TestApp',
         packageName: 'com.test.app',
         appVersion: '1.0.0',
-        sdkVersion: '0.1.0',
+        sdkVersion: '0.2.0',
         platform: 'Test',
         osVersion: '1.0',
         deviceModel: 'TestDevice',
