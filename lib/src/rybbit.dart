@@ -320,7 +320,7 @@ class Rybbit {
       properties: properties,
       appVersion: _deviceData.appVersion,
       sdkVersion: _deviceData.sdkVersion,
-      sdkName: 'rybbit-flutter',
+      sdkName: '@nks-hub/rybbit_flutter',
     );
   }
 
