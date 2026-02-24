@@ -1,6 +1,27 @@
-# rybbit_flutter
+<h1 align="center">rybbit_flutter</h1>
 
-Flutter SDK for [Rybbit](https://github.com/rybbit-io/rybbit) - open-source, privacy-friendly web analytics. Track screen views, custom events, errors, and user identification from Flutter apps on all platforms.
+<p align="center">
+  Flutter SDK for <a href="https://github.com/rybbit-io/rybbit">Rybbit</a> — open-source, privacy-friendly web analytics.
+</p>
+
+<p align="center">
+  <a href="https://github.com/nks-hub/rybbit-flutter/stargazers"><img src="https://img.shields.io/github/stars/nks-hub/rybbit-flutter?style=flat&color=22c55e" alt="Stars"></a>
+  <a href="https://github.com/nks-hub/rybbit-flutter/network/members"><img src="https://img.shields.io/github/forks/nks-hub/rybbit-flutter?style=flat&color=3b82f6" alt="Forks"></a>
+  <a href="https://github.com/nks-hub/rybbit-flutter/issues"><img src="https://img.shields.io/github/issues/nks-hub/rybbit-flutter?style=flat&color=f59e0b" alt="Issues"></a>
+  <a href="https://github.com/nks-hub/rybbit-flutter/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nks-hub/rybbit-flutter?style=flat&color=64748b" alt="License"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-3.10+-02569B?logo=flutter&logoColor=white" alt="Flutter">
+  <img src="https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart&logoColor=white" alt="Dart">
+  <img src="https://img.shields.io/badge/Android-5.0+-3DDC84?logo=android&logoColor=white" alt="Android">
+  <img src="https://img.shields.io/badge/iOS-12+-000000?logo=apple&logoColor=white" alt="iOS">
+  <img src="https://img.shields.io/badge/offline--first-Hive-orange" alt="Offline-first">
+</p>
+
+---
+
+Track screen views, custom events, errors, and user identification from Flutter apps on all platforms.
 
 ## Features
 
@@ -79,6 +100,28 @@ Rybbit.instance.identify('user-123', traits: {'plan': 'pro'});
 - [@nks-hub/rybbit-ts](https://github.com/nks-hub/rybbit-ts) - TypeScript SDK for web
 - [rybbit-app](https://github.com/nks-hub/rybbit-app) - Flutter dashboard for Rybbit
 
+## Contributing
+
+Contributions welcome! Please open an issue or pull request.
+
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
 ## License
 
 GNU General Public License v3.0 - see [LICENSE](LICENSE).
+
+---
+
+<p align="center">
+  Developed by <a href="https://nks-hub.cz">NKS Hub</a> | <a href="mailto:dev@nks-hub.cz">dev@nks-hub.cz</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/nks-hub/rybbit-flutter">
+    <img src="https://img.shields.io/badge/Give_a-⭐-yellow?style=for-the-badge" alt="Star this repo">
+  </a>
+</p>
