@@ -105,7 +105,7 @@ void main() {
       final e = mockTransport.sentEvents.first;
       expect(e.type, EventType.pageview);
       expect(e.siteId, 'test-site');
-      expect(e.hostname, 'com.test.app');
+      expect(e.hostname, 'TestApp');
       expect(e.pathname, '/home');
       expect(e.pageTitle, 'Home');
       expect(e.screenWidth, 1080);

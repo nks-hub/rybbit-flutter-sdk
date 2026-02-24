@@ -16,6 +16,7 @@ class DeviceData {
     required this.screenWidth,
     required this.screenHeight,
     required this.language,
+    this.customUserAgent,
   });
 
   final String appName;
@@ -28,11 +29,29 @@ class DeviceData {
   final int screenWidth;
   final int screenHeight;
   final String language;
+  final String? customUserAgent;
 
   /// RFC 7231 §5.5.3 compliant User-Agent string.
   /// Format: AppName/AppVersion (packageName; Platform OSVersion; deviceModel) RybbitFlutter/SDKVersion
-  String get userAgent =>
-      '$appName/$appVersion ($packageName; $platform $osVersion; $deviceModel) RybbitFlutter/$sdkVersion';
+  String get userAgent {
+    if (customUserAgent != null) return customUserAgent!;
+    final name = appName.isNotEmpty ? appName : packageName;
+    return '$name/$appVersion ($packageName; $platform $osVersion; $deviceModel) RybbitFlutter/$sdkVersion';
+  }
+
+  DeviceData withUserAgent(String ua) => DeviceData(
+        appName: appName,
+        packageName: packageName,
+        appVersion: appVersion,
+        sdkVersion: sdkVersion,
+        platform: platform,
+        osVersion: osVersion,
+        deviceModel: deviceModel,
+        screenWidth: screenWidth,
+        screenHeight: screenHeight,
+        language: language,
+        customUserAgent: ua,
+      );
 }
 
 abstract class DeviceInfoProvider {

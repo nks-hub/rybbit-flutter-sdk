@@ -58,6 +58,7 @@ class Rybbit {
     bool dryRun = false,
     bool autoTrackLifecycle = true,
     bool autoTrackErrors = true,
+    String? userAgent,
     Map<String, dynamic> globalProperties = const {},
     int maxOfflineEvents = 1000,
     int offlineTtlDays = 7,
@@ -100,7 +101,11 @@ class Rybbit {
     rybbit._transport = transport ?? RybbitHttpClient(host: host);
 
     final provider = deviceInfoProvider ?? DeviceInfoService();
-    rybbit._deviceData = await provider.collect();
+    var deviceData = await provider.collect();
+    if (userAgent != null) {
+      deviceData = deviceData.withUserAgent(userAgent);
+    }
+    rybbit._deviceData = deviceData;
     rybbit._logger.log('Device: ${rybbit._deviceData.userAgent}');
 
     if (!dryRun) {
@@ -302,7 +307,7 @@ class Rybbit {
     return TrackPayload(
       type: type,
       siteId: _config.siteId,
-      hostname: _deviceData.packageName,
+      hostname: _deviceData.appName.isNotEmpty ? _deviceData.appName : _deviceData.packageName,
       pathname: pathname ?? _session.currentScreen ?? '/',
       screenWidth: _deviceData.screenWidth,
       screenHeight: _deviceData.screenHeight,

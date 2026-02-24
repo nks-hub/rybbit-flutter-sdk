@@ -98,6 +98,60 @@ void main() {
       );
     });
 
+    test('customUserAgent overrides default', () {
+      final data = DeviceData(
+        appName: 'MyApp',
+        packageName: 'com.example.myapp',
+        appVersion: '1.0.0',
+        sdkVersion: '0.2.0',
+        platform: 'Android',
+        osVersion: '14',
+        deviceModel: 'Samsung SM-S911B',
+        screenWidth: 1080,
+        screenHeight: 2340,
+        language: 'cs-CZ',
+        customUserAgent: 'Custom/1.0',
+      );
+      expect(data.userAgent, 'Custom/1.0');
+    });
+
+    test('withUserAgent returns copy with custom UA', () {
+      final data = DeviceData(
+        appName: 'MyApp',
+        packageName: 'com.example.myapp',
+        appVersion: '1.0.0',
+        sdkVersion: '0.2.0',
+        platform: 'Android',
+        osVersion: '14',
+        deviceModel: 'Samsung SM-S911B',
+        screenWidth: 1080,
+        screenHeight: 2340,
+        language: 'cs-CZ',
+      );
+      final custom = data.withUserAgent('Override/2.0');
+      expect(custom.userAgent, 'Override/2.0');
+      expect(custom.appName, 'MyApp');
+      expect(custom.screenWidth, 1080);
+      // Original unchanged
+      expect(data.customUserAgent, isNull);
+    });
+
+    test('falls back to packageName when appName is empty', () {
+      final data = DeviceData(
+        appName: '',
+        packageName: 'com.example.myapp',
+        appVersion: '1.0.0',
+        sdkVersion: '0.2.0',
+        platform: 'Android',
+        osVersion: '14',
+        deviceModel: 'TestDevice',
+        screenWidth: 1080,
+        screenHeight: 2340,
+        language: 'en-US',
+      );
+      expect(data.userAgent, startsWith('com.example.myapp/'));
+    });
+
     test('all fields stored correctly', () {
       final data = DeviceData(
         appName: 'TestApp',
