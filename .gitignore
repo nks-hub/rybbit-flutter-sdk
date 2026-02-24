@@ -1,9 +1,24 @@
+# Flutter/Dart
 .dart_tool/
 .packages
 build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE
 *.iml
 .idea/
 .vscode/
+
+# Dependencies
 *.lock
-.flutter-plugins
-.flutter-plugins-dependencies
+
+# Test artifacts
+.test_hive_*/
+
+# Editor/IDE local configs
+.[a-z]*/
+!.git/
+!.github/
+/[A-Z]*.md
+!/README.md
