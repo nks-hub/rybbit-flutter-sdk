@@ -16,6 +16,14 @@ class RybbitHttpClient implements RybbitTransport {
 
   final String host;
   final http.Client _client;
+  bool debug = false;
+
+  void _log(String msg) {
+    if (debug) {
+      // ignore: avoid_print
+      print('[Rybbit HTTP] $msg');
+    }
+  }
 
   @override
   Future<bool> sendEvent(TrackPayload payload) async {
@@ -25,8 +33,12 @@ class RybbitHttpClient implements RybbitTransport {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload.toJson()),
       );
+      if (response.statusCode != 200) {
+        _log('sendEvent failed: ${response.statusCode} ${response.body}');
+      }
       return response.statusCode == 200;
-    } catch (_) {
+    } catch (e) {
+      _log('sendEvent error: $e');
       return false;
     }
   }

@@ -98,7 +98,8 @@ class Rybbit {
     rybbit._preInitQueue = EventQueue();
     rybbit._globalProperties.addAll(globalProperties);
     rybbit._session = SessionTracker();
-    rybbit._transport = transport ?? RybbitHttpClient(host: host);
+    final httpClient = RybbitHttpClient(host: host)..debug = debug;
+    rybbit._transport = transport ?? httpClient;
 
     final provider = deviceInfoProvider ?? DeviceInfoService();
     var deviceData = await provider.collect();
