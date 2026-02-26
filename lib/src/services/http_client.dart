@@ -6,6 +6,8 @@ import '../models/identify_payload.dart';
 abstract class RybbitTransport {
   Future<bool> sendEvent(TrackPayload payload);
   Future<bool> sendIdentify(IdentifyPayload payload);
+  Future<bool> hasSiteIcon(String siteId);
+  Future<bool> uploadSiteIcon(String siteId, String base64Png);
 }
 
 class RybbitHttpClient implements RybbitTransport {
@@ -53,6 +55,37 @@ class RybbitHttpClient implements RybbitTransport {
       );
       return response.statusCode == 200;
     } catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> hasSiteIcon(String siteId) async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$host/api/sites/$siteId/icon'),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      _log('hasSiteIcon error: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> uploadSiteIcon(String siteId, String base64Png) async {
+    try {
+      final response = await _client.put(
+        Uri.parse('$host/api/sites/$siteId/icon'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'icon': base64Png}),
+      );
+      if (response.statusCode != 200) {
+        _log('uploadSiteIcon failed: ${response.statusCode} ${response.body}');
+      }
+      return response.statusCode == 200;
+    } catch (e) {
+      _log('uploadSiteIcon error: $e');
       return false;
     }
   }

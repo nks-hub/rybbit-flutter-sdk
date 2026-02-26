@@ -15,6 +15,7 @@ import 'services/session.dart';
 import 'services/lifecycle.dart';
 import 'services/logger.dart';
 import 'services/error_handler.dart';
+import 'services/icon_uploader.dart';
 
 enum RybbitState { idle, initializing, ready, disposed }
 
@@ -58,6 +59,8 @@ class Rybbit {
     bool dryRun = false,
     bool autoTrackLifecycle = true,
     bool autoTrackErrors = true,
+    bool autoUploadIcon = true,
+    String? iconAssetPath,
     String? userAgent,
     Map<String, dynamic> globalProperties = const {},
     int maxOfflineEvents = 1000,
@@ -85,6 +88,8 @@ class Rybbit {
       dryRun: dryRun,
       autoTrackLifecycle: autoTrackLifecycle,
       autoTrackErrors: autoTrackErrors,
+      autoUploadIcon: autoUploadIcon,
+      iconAssetPath: iconAssetPath,
       globalProperties: globalProperties,
       maxOfflineEvents: maxOfflineEvents,
       offlineTtlDays: offlineTtlDays,
@@ -162,6 +167,16 @@ class Rybbit {
       );
       rybbit._errorHandler!.install();
       rybbit._logger.log('Auto error tracking enabled');
+    }
+
+    if (autoUploadIcon && !dryRun) {
+      // Fire-and-forget: don't block init on icon upload
+      IconUploader(
+        transport: rybbit._transport,
+        logger: rybbit._logger,
+        siteId: siteId,
+        iconAssetPath: iconAssetPath,
+      ).uploadIfMissing();
     }
 
     rybbit._logger.log('SDK ready');

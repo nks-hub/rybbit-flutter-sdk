@@ -6,6 +6,8 @@ class RybbitConfig {
     this.dryRun = false,
     this.autoTrackLifecycle = true,
     this.autoTrackErrors = true,
+    this.autoUploadIcon = true,
+    this.iconAssetPath,
     this.globalProperties = const {},
     this.maxOfflineEvents = 1000,
     this.offlineTtlDays = 7,
@@ -20,6 +22,15 @@ class RybbitConfig {
   final bool dryRun;
   final bool autoTrackLifecycle;
   final bool autoTrackErrors;
+
+  /// When true, automatically uploads the app's launcher icon to Rybbit
+  /// if the site doesn't have one yet.
+  final bool autoUploadIcon;
+
+  /// Custom asset path for the icon to upload. If null, uses the default
+  /// Android/iOS launcher icon resolution logic.
+  final String? iconAssetPath;
+
   final Map<String, dynamic> globalProperties;
   final int maxOfflineEvents;
   final int offlineTtlDays;

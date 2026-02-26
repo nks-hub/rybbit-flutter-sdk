@@ -22,6 +22,12 @@ class MockTransport implements RybbitTransport {
     sentIdentifies.add(payload);
     return !shouldFail;
   }
+
+  @override
+  Future<bool> hasSiteIcon(String siteId) async => true;
+
+  @override
+  Future<bool> uploadSiteIcon(String siteId, String base64Png) async => true;
 }
 
 class MockDeviceInfo implements DeviceInfoProvider {
