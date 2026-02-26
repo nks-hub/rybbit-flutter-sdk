@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:rybbit_flutter/src/models/event_type.dart';
-import 'package:rybbit_flutter/src/models/track_payload.dart';
-import 'package:rybbit_flutter/src/models/identify_payload.dart';
-import 'package:rybbit_flutter/src/services/http_client.dart';
+import 'package:rybbit_flutter_sdk/src/models/event_type.dart';
+import 'package:rybbit_flutter_sdk/src/models/track_payload.dart';
+import 'package:rybbit_flutter_sdk/src/models/identify_payload.dart';
+import 'package:rybbit_flutter_sdk/src/services/http_client.dart';
 
 void main() {
   group('RybbitHttpClient', () {

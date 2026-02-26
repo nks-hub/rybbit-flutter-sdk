@@ -1,4 +1,4 @@
-library rybbit_flutter;
+library rybbit_flutter_sdk;
 
 export 'src/config.dart';
 export 'src/models/event_type.dart';

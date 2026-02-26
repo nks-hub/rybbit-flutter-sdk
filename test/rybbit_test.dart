@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
-import 'package:rybbit_flutter/rybbit_flutter.dart';
-import 'package:rybbit_flutter/src/services/http_client.dart';
-import 'package:rybbit_flutter/src/services/device_info.dart';
-import 'package:rybbit_flutter/src/services/offline_store.dart';
+import 'package:rybbit_flutter_sdk/rybbit_flutter_sdk.dart';
+import 'package:rybbit_flutter_sdk/src/services/http_client.dart';
+import 'package:rybbit_flutter_sdk/src/services/device_info.dart';
+import 'package:rybbit_flutter_sdk/src/services/offline_store.dart';
 
 class MockTransport implements RybbitTransport {
   final List<TrackPayload> sentEvents = [];

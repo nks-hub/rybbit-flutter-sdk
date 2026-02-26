@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rybbit_flutter/rybbit_flutter.dart';
-import 'package:rybbit_flutter/ga4_events.dart';
+import 'package:rybbit_flutter_sdk/rybbit_flutter.dart';
+import 'package:rybbit_flutter_sdk/ga4_events.dart';
 
 void main() {
   Rybbit.runApp(() async {

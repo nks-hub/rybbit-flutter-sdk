@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rybbit_flutter/rybbit_flutter.dart';
+import 'package:rybbit_flutter_sdk/rybbit_flutter_sdk.dart';
 
 void main() {
   group('TrackPayload', () {

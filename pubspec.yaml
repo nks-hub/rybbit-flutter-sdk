@@ -1,7 +1,15 @@
-name: rybbit_flutter
-description: Flutter SDK for Rybbit Analytics. Track screen views, events, errors, and user identification.
+name: rybbit_flutter_sdk
+description: Flutter SDK for Rybbit Analytics. Track screen views, events, errors, and user identification with offline queue, GA4 events, and multi-platform support.
 version: 0.2.0
-homepage: https://github.com/nks-hub/rybbit-flutter
+homepage: https://github.com/nks-hub/rybbit-flutter-sdk
+repository: https://github.com/nks-hub/rybbit-flutter-sdk
+issue_tracker: https://github.com/nks-hub/rybbit-flutter-sdk/issues
+topics:
+  - analytics
+  - rybbit
+  - tracking
+  - privacy
+  - events
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

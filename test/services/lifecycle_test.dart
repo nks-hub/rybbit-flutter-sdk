@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rybbit_flutter/src/services/lifecycle.dart';
+import 'package:rybbit_flutter_sdk/src/services/lifecycle.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

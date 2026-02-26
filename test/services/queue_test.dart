@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rybbit_flutter/src/models/event_type.dart';
-import 'package:rybbit_flutter/src/models/track_payload.dart';
-import 'package:rybbit_flutter/src/services/queue.dart';
+import 'package:rybbit_flutter_sdk/src/models/event_type.dart';
+import 'package:rybbit_flutter_sdk/src/models/track_payload.dart';
+import 'package:rybbit_flutter_sdk/src/services/queue.dart';
 
 void main() {
   group('EventQueue', () {

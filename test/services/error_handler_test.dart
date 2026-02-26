@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rybbit_flutter/src/services/error_handler.dart';
+import 'package:rybbit_flutter_sdk/src/services/error_handler.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

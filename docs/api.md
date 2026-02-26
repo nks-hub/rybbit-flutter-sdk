@@ -1,6 +1,6 @@
 # API Reference
 
-Complete API documentation for `rybbit_flutter` SDK.
+Complete API documentation for `rybbit_flutter_sdk` SDK.
 
 ---
 
@@ -548,7 +548,7 @@ Deduplicates consecutive identical state changes.
 
 ## GA4 Typed Events
 
-Import: `import 'package:rybbit_flutter/ga4_events.dart';`
+Import: `import 'package:rybbit_flutter_sdk/ga4_events.dart';`
 
 Extension `RybbitGA4Events` on `Rybbit` class.
 

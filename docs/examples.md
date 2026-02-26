@@ -1,6 +1,6 @@
 # Examples
 
-Practical usage examples for `rybbit_flutter` SDK.
+Practical usage examples for `rybbit_flutter_sdk` SDK.
 
 ---
 
@@ -10,7 +10,7 @@ Practical usage examples for `rybbit_flutter` SDK.
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:rybbit_flutter/rybbit_flutter.dart';
+import 'package:rybbit_flutter_sdk/rybbit_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -302,7 +302,7 @@ Future<void> _logout() async {
 ### Full Purchase Flow
 
 ```dart
-import 'package:rybbit_flutter/ga4_events.dart';
+import 'package:rybbit_flutter_sdk/ga4_events.dart';
 
 // 1. User views product
 void _onProductViewed(Product product) {
@@ -405,7 +405,7 @@ Rybbit.instance.removeGlobalProperty('ab_variant');
 
 ```dart
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rybbit_flutter/rybbit_flutter.dart';
+import 'package:rybbit_flutter_sdk/rybbit_flutter.dart';
 
 void main() {
   setUp(() async {

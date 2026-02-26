@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rybbit_flutter/src/services/device_info.dart';
+import 'package:rybbit_flutter_sdk/src/services/device_info.dart';
 
 void main() {
   group('DeviceData userAgent', () {

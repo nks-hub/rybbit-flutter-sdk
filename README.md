@@ -1,14 +1,15 @@
-<h1 align="center">rybbit_flutter</h1>
+<h1 align="center">rybbit_flutter_sdk</h1>
 
 <p align="center">
   Flutter SDK for <a href="https://github.com/rybbit-io/rybbit">Rybbit</a> — open-source, privacy-friendly web analytics.
 </p>
 
 <p align="center">
-  <a href="https://github.com/nks-hub/rybbit-flutter/stargazers"><img src="https://img.shields.io/github/stars/nks-hub/rybbit-flutter?style=flat&color=22c55e" alt="Stars"></a>
-  <a href="https://github.com/nks-hub/rybbit-flutter/network/members"><img src="https://img.shields.io/github/forks/nks-hub/rybbit-flutter?style=flat&color=3b82f6" alt="Forks"></a>
-  <a href="https://github.com/nks-hub/rybbit-flutter/issues"><img src="https://img.shields.io/github/issues/nks-hub/rybbit-flutter?style=flat&color=f59e0b" alt="Issues"></a>
-  <a href="https://github.com/nks-hub/rybbit-flutter/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nks-hub/rybbit-flutter?style=flat&color=64748b" alt="License"></a>
+  <a href="https://pub.dev/packages/rybbit_flutter_sdk"><img src="https://img.shields.io/pub/v/rybbit_flutter_sdk?color=22c55e" alt="pub.dev"></a>
+  <a href="https://github.com/nks-hub/rybbit-flutter-sdk/stargazers"><img src="https://img.shields.io/github/stars/nks-hub/rybbit-flutter-sdk?style=flat&color=22c55e" alt="Stars"></a>
+  <a href="https://github.com/nks-hub/rybbit-flutter-sdk/network/members"><img src="https://img.shields.io/github/forks/nks-hub/rybbit-flutter-sdk?style=flat&color=3b82f6" alt="Forks"></a>
+  <a href="https://github.com/nks-hub/rybbit-flutter-sdk/issues"><img src="https://img.shields.io/github/issues/nks-hub/rybbit-flutter-sdk?style=flat&color=f59e0b" alt="Issues"></a>
+  <a href="https://github.com/nks-hub/rybbit-flutter-sdk/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nks-hub/rybbit-flutter-sdk?style=flat&color=64748b" alt="License"></a>
 </p>
 
 <p align="center">
@@ -34,15 +35,25 @@ Track screen views, custom events, errors, and user identification from Flutter 
 - **Persistent offline queue** - Hive-backed, survives app restarts
 - **App lifecycle tracking** - automatic `app_open`, `app_foreground`, `app_background`
 - **Connectivity monitoring** - auto-drains offline queue when back online
+- **Auto icon upload** - automatically uploads app icon to Rybbit dashboard
 - **All platforms** - Android, iOS, macOS, Windows, Linux, Web
 
 ## Installation
 
+### From pub.dev
+
 ```yaml
 dependencies:
-  rybbit_flutter:
+  rybbit_flutter_sdk: ^0.2.0
+```
+
+### From Git
+
+```yaml
+dependencies:
+  rybbit_flutter_sdk:
     git:
-      url: https://github.com/nks-hub/rybbit-flutter.git
+      url: https://github.com/nks-hub/rybbit-flutter-sdk.git
       ref: main
 ```
 
@@ -50,7 +61,7 @@ dependencies:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:rybbit_flutter/rybbit_flutter.dart';
+import 'package:rybbit_flutter_sdk/rybbit_flutter_sdk.dart';
 
 void main() {
   Rybbit.runApp(() async {
@@ -124,7 +135,7 @@ GNU General Public License v3.0 - see [LICENSE](LICENSE).
 </p>
 
 <p align="center">
-  <a href="https://github.com/nks-hub/rybbit-flutter">
+  <a href="https://github.com/nks-hub/rybbit-flutter-sdk">
     <img src="https://img.shields.io/badge/Give_a-⭐-yellow?style=for-the-badge" alt="Star this repo">
   </a>
 </p>

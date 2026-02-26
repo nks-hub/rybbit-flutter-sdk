@@ -1,5 +1,5 @@
-name: rybbit_flutter_example
-description: Example app for rybbit_flutter SDK
+name: rybbit_flutter_sdk_example
+description: Example app for rybbit_flutter_sdk
 publish_to: none
 
 environment:
@@ -9,5 +9,5 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  rybbit_flutter:
+  rybbit_flutter_sdk:
     path: ../

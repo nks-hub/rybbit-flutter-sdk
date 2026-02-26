@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rybbit_flutter/src/services/session.dart';
+import 'package:rybbit_flutter_sdk/src/services/session.dart';
 
 void main() {
   group('SessionTracker', () {
