@@ -96,8 +96,8 @@ Rybbit.instance.identify('user-123', traits: {'plan': 'pro'});
 
 ## Documentation
 
-- **[API Reference](docs/api.md)** - Complete API documentation for all classes, methods, and configuration options
-- **[Examples](docs/examples.md)** - Practical usage examples: setup, navigation, e-commerce, error handling, testing, and more
+- **[API Reference](doc/api.md)** - Complete API documentation for all classes, methods, and configuration options
+- **[Examples](doc/examples.md)** - Practical usage examples: setup, navigation, e-commerce, error handling, testing, and more
 
 ## Requirements
 

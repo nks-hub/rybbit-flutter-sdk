@@ -4,6 +4,13 @@ import '../models/track_payload.dart';
 
 class OfflineEvent {
   OfflineEvent({required this.payload, required this.timestamp, this.retryCount = 0});
+
+  factory OfflineEvent.fromJson(Map<String, dynamic> json) => OfflineEvent(
+    payload: TrackPayload.fromJson((json['payload'] as Map).cast<String, dynamic>()),
+    timestamp: DateTime.parse(json['timestamp'] as String),
+    retryCount: json['retryCount'] as int? ?? 0,
+  );
+
   final TrackPayload payload;
   final DateTime timestamp;
   int retryCount;
@@ -13,12 +20,6 @@ class OfflineEvent {
     'timestamp': timestamp.toIso8601String(),
     'retryCount': retryCount,
   };
-
-  factory OfflineEvent.fromJson(Map<String, dynamic> json) => OfflineEvent(
-    payload: TrackPayload.fromJson((json['payload'] as Map).cast<String, dynamic>()),
-    timestamp: DateTime.parse(json['timestamp'] as String),
-    retryCount: json['retryCount'] as int? ?? 0,
-  );
 }
 
 abstract class OfflineEventStore {

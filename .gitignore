@@ -22,3 +22,4 @@ build/
 !.github/
 /[A-Z]*.md
 !/README.md
+!/CHANGELOG.md

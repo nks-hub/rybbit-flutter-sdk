@@ -1,0 +1,9 @@
+.git/
+.github/
+.test_hive_*/
+.idea/
+.vscode/
+.dart_tool/
+build/
+*.iml
+*.lock

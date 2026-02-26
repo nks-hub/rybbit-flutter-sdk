@@ -26,6 +26,37 @@ class TrackPayload {
     this.deviceModel,
   });
 
+  factory TrackPayload.fromJson(Map<String, dynamic> json) {
+    return TrackPayload(
+      type: EventType.values.firstWhere((e) => e.value == json['type']),
+      siteId: json['site_id'] as String,
+      hostname: json['hostname'] as String?,
+      pathname: json['pathname'] as String?,
+      querystring: json['querystring'] as String? ?? '',
+      screenWidth: json['screenWidth'] as int?,
+      screenHeight: json['screenHeight'] as int?,
+      language: json['language'] as String?,
+      pageTitle: json['page_title'] as String?,
+      referrer: json['referrer'] as String?,
+      userId: json['user_id'] as String?,
+      userAgent: json['user_agent'] as String?,
+      eventName: json['event_name'] as String?,
+      properties: json['properties'] != null
+          ? (json['properties'] is String
+              ? jsonDecode(json['properties'] as String)
+                  as Map<String, dynamic>
+              : json['properties'] as Map<String, dynamic>)
+          : null,
+      lcp: (json['lcp'] as num?)?.toDouble(),
+      cls: (json['cls'] as num?)?.toDouble(),
+      inp: (json['inp'] as num?)?.toDouble(),
+      fcp: (json['fcp'] as num?)?.toDouble(),
+      ttfb: (json['ttfb'] as num?)?.toDouble(),
+      appVersion: json['app_version'] as String?,
+      deviceModel: json['device_model'] as String?,
+    );
+  }
+
   final EventType type;
   final String siteId;
   final String? hostname;
@@ -73,36 +104,5 @@ class TrackPayload {
     if (appVersion != null) json['app_version'] = appVersion;
     if (deviceModel != null) json['device_model'] = deviceModel;
     return json;
-  }
-
-  factory TrackPayload.fromJson(Map<String, dynamic> json) {
-    return TrackPayload(
-      type: EventType.values.firstWhere((e) => e.value == json['type']),
-      siteId: json['site_id'] as String,
-      hostname: json['hostname'] as String?,
-      pathname: json['pathname'] as String?,
-      querystring: json['querystring'] as String? ?? '',
-      screenWidth: json['screenWidth'] as int?,
-      screenHeight: json['screenHeight'] as int?,
-      language: json['language'] as String?,
-      pageTitle: json['page_title'] as String?,
-      referrer: json['referrer'] as String?,
-      userId: json['user_id'] as String?,
-      userAgent: json['user_agent'] as String?,
-      eventName: json['event_name'] as String?,
-      properties: json['properties'] != null
-          ? (json['properties'] is String
-              ? jsonDecode(json['properties'] as String)
-                  as Map<String, dynamic>
-              : json['properties'] as Map<String, dynamic>)
-          : null,
-      lcp: (json['lcp'] as num?)?.toDouble(),
-      cls: (json['cls'] as num?)?.toDouble(),
-      inp: (json['inp'] as num?)?.toDouble(),
-      fcp: (json['fcp'] as num?)?.toDouble(),
-      ttfb: (json['ttfb'] as num?)?.toDouble(),
-      appVersion: json['app_version'] as String?,
-      deviceModel: json['device_model'] as String?,
-    );
   }
 }
