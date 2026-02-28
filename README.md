@@ -103,6 +103,7 @@ Rybbit.instance.identify('user-123', traits: {'plan': 'pro'});
 
 - Flutter >= 3.10.0
 - Dart >= 3.0.0
+- Rybbit server with [PR #921](https://github.com/rybbit-io/rybbit/pull/921) merged (adds `identified_user_id` and traits to funnel step sessions)
 
 ## Dependencies
 
