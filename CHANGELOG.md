@@ -1,3 +1,8 @@
+## 0.2.1
+
+- Add dartdoc comments to public API (20%+ coverage for pub.dev score)
+- Widen `connectivity_plus` constraint to support 7.x (`>=6.0.0 <8.0.0`)
+
 ## 0.2.0
 
 - **BREAKING**: Package renamed from `rybbit_flutter` to `rybbit_flutter_sdk`
