@@ -1,3 +1,7 @@
+## 0.2.2
+
+- Add server PR #921 dependency note to README
+
 ## 0.2.1
 
 - Add dartdoc comments to public API (20%+ coverage for pub.dev score)
