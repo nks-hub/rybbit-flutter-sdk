@@ -1,3 +1,4 @@
+/// Configuration for the Rybbit SDK, passed to [Rybbit.init].
 class RybbitConfig {
   const RybbitConfig({
     required this.host,
@@ -39,6 +40,7 @@ class RybbitConfig {
   final int flushThreshold;
 }
 
+/// Thrown when [Rybbit.instance] is accessed before [Rybbit.init].
 class RybbitInitException implements Exception {
   RybbitInitException(this.message);
   final String message;

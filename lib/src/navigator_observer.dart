@@ -1,6 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'rybbit.dart';
 
+/// Navigator observer that automatically tracks screen views on route changes.
+///
+/// Add to [MaterialApp.navigatorObservers] for automatic screen tracking:
+/// ```dart
+/// MaterialApp(navigatorObservers: [RybbitNavigatorObserver()]);
+/// ```
 class RybbitNavigatorObserver extends NavigatorObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {

@@ -1,3 +1,4 @@
+/// Types of events tracked by the Rybbit SDK.
 enum EventType {
   pageview('pageview'),
   customEvent('custom_event'),

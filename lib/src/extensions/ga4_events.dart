@@ -1,5 +1,9 @@
 import '../rybbit.dart';
 
+/// GA4-compatible typed event methods for common analytics scenarios.
+///
+/// Provides strongly-typed wrappers for e-commerce, auth, search,
+/// and engagement events following Google Analytics 4 naming conventions.
 extension RybbitGA4Events on Rybbit {
   // Auth
   void trackLogin({String? method}) =>

@@ -16,8 +16,19 @@ import 'services/logger.dart';
 import 'services/error_handler.dart';
 import 'services/icon_uploader.dart';
 
+/// Lifecycle state of the Rybbit SDK singleton.
 enum RybbitState { idle, initializing, ready, disposed }
 
+/// Main entry point for Rybbit Analytics SDK.
+///
+/// Provides screen view tracking, custom events, error tracking,
+/// user identification, and offline event queuing.
+///
+/// ```dart
+/// await Rybbit.init(host: 'https://analytics.example.com', siteId: '1');
+/// Rybbit.instance.screenView('/home');
+/// Rybbit.instance.event('button_click', properties: {'id': 'cta'});
+/// ```
 class Rybbit {
   Rybbit._();
 
@@ -29,6 +40,7 @@ class Rybbit {
     return _instance!;
   }
 
+  /// Whether the SDK has been initialized and is ready to track events.
   static bool get isInitialized =>
       _instance != null && _instance!._state == RybbitState.ready;
 
@@ -51,6 +63,11 @@ class Rybbit {
 
   RybbitState get state => _state;
 
+  /// Initializes the SDK with the given [host] URL and [siteId].
+  ///
+  /// Must be called before accessing [instance]. Configures device info
+  /// collection, offline storage, connectivity monitoring, and optional
+  /// lifecycle/error tracking.
   static Future<void> init({
     required String host,
     required String siteId,
@@ -181,6 +198,7 @@ class Rybbit {
     rybbit._logger.log('SDK ready');
   }
 
+  /// Disposes the current instance and resets the singleton.
   static Future<void> reset() async {
     if (_instance != null) {
       await _instance!.dispose();
@@ -216,6 +234,7 @@ class Rybbit {
 
   // --- Core Tracking ---
 
+  /// Tracks a screen view with the given [pathname] and optional [title].
   void screenView(String pathname, {String? title}) {
     _session.navigateTo(pathname, title: title);
     final payload = _buildPayload(
@@ -227,6 +246,7 @@ class Rybbit {
     _logger.log('screenView: $pathname');
   }
 
+  /// Tracks a custom event with the given [name] and optional [properties].
   void event(String name, {Map<String, dynamic>? properties}) {
     final merged = _mergeProperties(properties);
     final payload = _buildPayload(
@@ -238,6 +258,7 @@ class Rybbit {
     _logger.log('event: $name', properties);
   }
 
+  /// Tracks an error with optional [stackTrace] and [context] metadata.
   void trackError(
     Object error,
     StackTrace? stackTrace, {
@@ -265,6 +286,9 @@ class Rybbit {
 
   // --- User Identity ---
 
+  /// Associates the current device with a [userId] and optional [traits].
+  ///
+  /// Backfills the last 30 days of anonymous events server-side.
   void identify(String userId, {Map<String, dynamic>? traits}) {
     _userId = userId;
     _logger.log('identify: $userId');
@@ -278,6 +302,7 @@ class Rybbit {
     ));
   }
 
+  /// Updates [traits] for the currently identified user without re-aliasing.
   void setTraits(Map<String, dynamic> traits) {
     if (_userId == null) {
       _logger.warn('setTraits called without identify()');
@@ -293,6 +318,7 @@ class Rybbit {
     ));
   }
 
+  /// Clears the current user identity. Subsequent events are anonymous.
   void clearUserId() {
     _userId = null;
     _logger.log('clearUserId');
@@ -403,6 +429,7 @@ class Rybbit {
     }
   }
 
+  /// Flushes pending events, cancels timers, and releases resources.
   Future<void> dispose() async {
     _state = RybbitState.disposed;
     _flushTimer?.cancel();
