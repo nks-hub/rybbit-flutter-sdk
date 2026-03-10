@@ -56,6 +56,8 @@ class Rybbit {
   Timer? _flushTimer;
   final List<TrackPayload> _buffer = [];
   String? _userId;
+  Box<String>? _identityBox;
+  static const _identityBoxName = 'rybbit_identity';
   final Map<String, dynamic> _globalProperties = {};
   RybbitState _state = RybbitState.idle;
   bool _isOnline = true;
@@ -143,6 +145,20 @@ class Rybbit {
         );
       }
       await rybbit._offlineStore!.init();
+
+      // Restore persisted userId before any events fire.
+      // This mirrors the JS SDK's localStorage persistence and ensures
+      // lifecycle events (app_open, app_foreground) include the userId.
+      try {
+        rybbit._identityBox = await Hive.openBox<String>(_identityBoxName);
+        final persistedUserId = rybbit._identityBox!.get('user_id');
+        if (persistedUserId != null) {
+          rybbit._userId = persistedUserId;
+          rybbit._logger.log('Restored userId: $persistedUserId');
+        }
+      } catch (e) {
+        rybbit._logger.warn('Failed to restore userId: $e');
+      }
 
       final connectivity = Connectivity();
       rybbit._connectivitySubscription =
@@ -288,9 +304,11 @@ class Rybbit {
 
   /// Associates the current device with a [userId] and optional [traits].
   ///
+  /// The userId is persisted locally so it survives app restarts.
   /// Backfills the last 30 days of anonymous events server-side.
   void identify(String userId, {Map<String, dynamic>? traits}) {
     _userId = userId;
+    _persistUserId(userId);
     _logger.log('identify: $userId');
     if (_config.dryRun) return;
 
@@ -318,9 +336,11 @@ class Rybbit {
     ));
   }
 
-  /// Clears the current user identity. Subsequent events are anonymous.
+  /// Clears the current user identity and removes persisted userId.
+  /// Subsequent events are anonymous.
   void clearUserId() {
     _userId = null;
+    _clearPersistedUserId();
     _logger.log('clearUserId');
   }
 
@@ -337,6 +357,22 @@ class Rybbit {
   }
 
   // --- Private ---
+
+  void _persistUserId(String userId) {
+    try {
+      _identityBox?.put('user_id', userId);
+    } catch (e) {
+      _logger.warn('Failed to persist userId: $e');
+    }
+  }
+
+  void _clearPersistedUserId() {
+    try {
+      _identityBox?.delete('user_id');
+    } catch (e) {
+      _logger.warn('Failed to clear persisted userId: $e');
+    }
+  }
 
   TrackPayload _buildPayload({
     required EventType type,
@@ -439,6 +475,9 @@ class Rybbit {
     await _flushBuffer();
     if (_offlineStore != null) {
       await _offlineStore!.close();
+    }
+    if (_identityBox != null && _identityBox!.isOpen) {
+      await _identityBox!.close();
     }
     _logger.log('SDK disposed');
   }
