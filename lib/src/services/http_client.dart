@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:http/http.dart' as http;
 import '../models/track_payload.dart';
 import '../models/identify_payload.dart';
@@ -22,10 +23,11 @@ class RybbitHttpClient implements RybbitTransport {
 
   void _log(String msg) {
     if (debug) {
-      // ignore: avoid_print
-      print('[Rybbit HTTP] $msg');
+      debugPrint('[Rybbit HTTP] $msg');
     }
   }
+
+  static const _timeout = Duration(seconds: 15);
 
   @override
   Future<bool> sendEvent(TrackPayload payload) async {
@@ -34,7 +36,7 @@ class RybbitHttpClient implements RybbitTransport {
         Uri.parse('$host/api/track'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload.toJson()),
-      );
+      ).timeout(_timeout);
       if (response.statusCode != 200) {
         _log('sendEvent failed: ${response.statusCode} ${response.body}');
       }
@@ -52,7 +54,7 @@ class RybbitHttpClient implements RybbitTransport {
         Uri.parse('$host/api/identify'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload.toJson()),
-      );
+      ).timeout(_timeout);
       return response.statusCode == 200;
     } catch (_) {
       return false;
@@ -64,7 +66,7 @@ class RybbitHttpClient implements RybbitTransport {
     try {
       final response = await _client.get(
         Uri.parse('$host/api/sites/$siteId/icon'),
-      );
+      ).timeout(_timeout);
       return response.statusCode == 200;
     } catch (e) {
       _log('hasSiteIcon error: $e');
@@ -79,7 +81,7 @@ class RybbitHttpClient implements RybbitTransport {
         Uri.parse('$host/api/sites/$siteId/icon'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'icon': base64Png}),
-      );
+      ).timeout(_timeout);
       if (response.statusCode != 200) {
         _log('uploadSiteIcon failed: ${response.statusCode} ${response.body}');
       }

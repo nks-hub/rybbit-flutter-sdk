@@ -451,17 +451,22 @@ class Rybbit {
     if (events.isEmpty) return;
     _logger.log('Draining ${events.length} offline events');
 
-    await _offlineStore!.clear();
+    final failedEvents = <OfflineEvent>[];
     for (final event in events) {
       final success = await _transport.sendEvent(event.payload);
       if (!success) {
         event.retryCount++;
         if (event.retryCount < _config.maxRetries) {
-          await _offlineStore!.add(event.payload);
+          failedEvents.add(event);
         } else {
           _logger.warn('Event discarded after ${_config.maxRetries} retries');
         }
       }
+    }
+
+    await _offlineStore!.clear();
+    for (final event in failedEvents) {
+      await _offlineStore!.add(event.payload);
     }
   }
 
@@ -473,6 +478,9 @@ class Rybbit {
     _errorHandler?.uninstall();
     _connectivitySubscription?.cancel();
     await _flushBuffer();
+    if (_transport is RybbitHttpClient) {
+      (_transport as RybbitHttpClient).close();
+    }
     if (_offlineStore != null) {
       await _offlineStore!.close();
     }

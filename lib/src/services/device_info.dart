@@ -1,8 +1,8 @@
-import 'dart:io' show Platform;
-import 'dart:ui' show PlatformDispatcher;
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'device_info_stub.dart'
+    if (dart.library.io) 'device_info_io.dart'
+    if (dart.library.html) 'device_info_web.dart' as impl;
+
+const String sdkVersion = '0.2.3';
 
 class DeviceData {
   const DeviceData({
@@ -31,8 +31,7 @@ class DeviceData {
   final String language;
   final String? customUserAgent;
 
-  /// RFC 7231 §5.5.3 compliant User-Agent string.
-  /// Format: AppName/AppVersion (packageName; Platform OSVersion; deviceModel) RybbitFlutter/SDKVersion
+  /// RFC 7231 compliant User-Agent string.
   String get userAgent {
     if (customUserAgent != null) return customUserAgent!;
     final name = appName.isNotEmpty ? appName : packageName;
@@ -59,67 +58,6 @@ abstract class DeviceInfoProvider {
 }
 
 class DeviceInfoService implements DeviceInfoProvider {
-  static const String _sdkVersion = '0.2.0';
-
   @override
-  Future<DeviceData> collect() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    final deviceInfo = DeviceInfoPlugin();
-
-    String platformName;
-    String osVersion;
-    String deviceModel;
-
-    if (kIsWeb) {
-      final webInfo = await deviceInfo.webBrowserInfo;
-      platformName = 'Web';
-      osVersion = webInfo.platform ?? 'unknown';
-      deviceModel = webInfo.browserName.name;
-    } else if (Platform.isAndroid) {
-      final androidInfo = await deviceInfo.androidInfo;
-      platformName = 'Android';
-      osVersion = androidInfo.version.release;
-      deviceModel = '${androidInfo.manufacturer} ${androidInfo.model}';
-    } else if (Platform.isIOS) {
-      final iosInfo = await deviceInfo.iosInfo;
-      platformName = 'iOS';
-      osVersion = iosInfo.systemVersion;
-      deviceModel = iosInfo.utsname.machine;
-    } else if (Platform.isMacOS) {
-      final macInfo = await deviceInfo.macOsInfo;
-      platformName = 'macOS';
-      osVersion = '${macInfo.majorVersion}.${macInfo.minorVersion}';
-      deviceModel = macInfo.model;
-    } else if (Platform.isWindows) {
-      final winInfo = await deviceInfo.windowsInfo;
-      platformName = 'Windows';
-      osVersion = '${winInfo.majorVersion}.${winInfo.minorVersion}';
-      deviceModel = winInfo.productName;
-    } else if (Platform.isLinux) {
-      final linuxInfo = await deviceInfo.linuxInfo;
-      platformName = 'Linux';
-      osVersion = linuxInfo.versionId ?? 'unknown';
-      deviceModel = linuxInfo.prettyName;
-    } else {
-      platformName = 'Unknown';
-      osVersion = 'unknown';
-      deviceModel = 'unknown';
-    }
-
-    final display = PlatformDispatcher.instance.views.first;
-    final screenSize = display.physicalSize;
-
-    return DeviceData(
-      appName: packageInfo.appName,
-      packageName: packageInfo.packageName,
-      appVersion: packageInfo.version,
-      sdkVersion: _sdkVersion,
-      platform: platformName,
-      osVersion: osVersion,
-      deviceModel: deviceModel,
-      screenWidth: screenSize.width.toInt(),
-      screenHeight: screenSize.height.toInt(),
-      language: PlatformDispatcher.instance.locale.toLanguageTag(),
-    );
-  }
+  Future<DeviceData> collect() => impl.createDeviceInfoService().collect();
 }

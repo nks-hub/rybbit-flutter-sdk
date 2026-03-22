@@ -1,3 +1,12 @@
+## 0.2.3
+
+- Fix `dart:io` import breaking web compilation (conditional imports)
+- Fix SDK version constant synced with pubspec (0.2.3)
+- Fix offline store data loss: events are now sent before clearing the store
+- Add 15s timeout to all HTTP requests
+- Replace `print()` with `debugPrint()` in HTTP client
+- Close HTTP client on `dispose()`
+
 ## 0.2.2
 
 - Add server PR #921 dependency note to README
