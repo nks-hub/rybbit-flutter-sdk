@@ -1,3 +1,7 @@
+## 0.2.4
+
+- Fix pub.dev version sync with latest changes
+
 ## 0.2.3
 
 - Fix `dart:io` import breaking web compilation (conditional imports)
