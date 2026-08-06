@@ -2,7 +2,7 @@ import 'device_info_stub.dart'
     if (dart.library.io) 'device_info_io.dart'
     if (dart.library.html) 'device_info_web.dart' as impl;
 
-const String sdkVersion = '0.2.4';
+const String sdkVersion = '0.2.5';
 
 class DeviceData {
   const DeviceData({

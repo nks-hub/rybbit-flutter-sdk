@@ -1,3 +1,10 @@
+## 0.2.5
+
+- `autoUploadIcon` now defaults to `false`. The upload endpoint requires an
+  authenticated site admin, so a shipped app always got a 403 back — the option
+  only ever produced a warning in the log. Upload the icon from Site Settings
+  instead.
+
 ## 0.2.4
 
 - Fix pub.dev version sync with latest changes

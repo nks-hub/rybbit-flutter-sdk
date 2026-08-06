@@ -77,7 +77,7 @@ class Rybbit {
     bool dryRun = false,
     bool autoTrackLifecycle = true,
     bool autoTrackErrors = true,
-    bool autoUploadIcon = true,
+    bool autoUploadIcon = false,
     String? iconAssetPath,
     String? userAgent,
     Map<String, dynamic> globalProperties = const {},
