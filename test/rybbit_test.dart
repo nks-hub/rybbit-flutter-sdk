@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
@@ -276,4 +278,61 @@ void main() {
       expect(FlutterError.onError, isNot(equals(handlerDuringInit)));
     });
   });
+
+  group('dispose during an in-flight flush', () {
+    test('waits for it instead of closing the box underneath', () async {
+      // A send that takes a while and fails is what pushes the payload into the
+      // offline store - the write that used to land on an already closed box.
+      final slow = SlowFailingTransport(const Duration(milliseconds: 100));
+      await Rybbit.init(
+        host: 'https://test.example.com',
+        siteId: 'test-site',
+        debug: true,
+        flushThreshold: 1,
+        transport: slow,
+        deviceInfoProvider: MockDeviceInfo(),
+        offlineStore: offlineStore,
+      );
+
+      final escaped = <Object>[];
+      await runZonedGuarded(() async {
+        // Not awaited on purpose: the flush timer and the lifecycle observer
+        // start their flushes exactly like this.
+        Rybbit.instance.event('behem_letu');
+        await Rybbit.reset();
+      }, (error, _) => escaped.add(error));
+
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+
+      expect(escaped, isEmpty, reason: 'analytics must not crash the host app');
+      // Guards against the test passing because nothing was ever sent: the
+      // count itself is not fixed, a restored connection re-sends what the
+      // failed attempt put in the offline store.
+      expect(slow.attempts, greaterThanOrEqualTo(1));
+    });
+  });
+}
+
+class SlowFailingTransport implements RybbitTransport {
+  SlowFailingTransport(this.delay);
+
+  final Duration delay;
+  int attempts = 0;
+
+  @override
+  Future<bool> sendEvent(TrackPayload payload) async {
+    attempts++;
+    await Future<void>.delayed(delay);
+
+    return false;
+  }
+
+  @override
+  Future<bool> sendIdentify(IdentifyPayload payload) async => false;
+
+  @override
+  Future<bool> hasSiteIcon(String siteId) async => true;
+
+  @override
+  Future<bool> uploadSiteIcon(String siteId, String base64Png) async => true;
 }

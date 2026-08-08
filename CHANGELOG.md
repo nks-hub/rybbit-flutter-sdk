@@ -1,5 +1,13 @@
 ## 0.2.5
 
+- Fix a crash in the host app when the SDK is disposed while a flush is still
+  running. The flush timer, the lifecycle observer and the connectivity listener
+  start their work without awaiting it, so `dispose()` could close the offline
+  box underneath one of them and the write surfaced as an uncatchable
+  `HiveError: Box has already been closed.` Everything that touches the offline
+  store now runs on one chain that `dispose()` waits for, work queued after
+  disposal is skipped, and a failure there is logged instead of reaching the
+  host app's zone handler.
 - `autoUploadIcon` now defaults to `false`. The upload endpoint requires an
   authenticated site admin, so a shipped app always got a 403 back — the option
   only ever produced a warning in the log. Upload the icon from Site Settings

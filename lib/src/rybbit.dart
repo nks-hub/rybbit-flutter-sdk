@@ -54,6 +54,7 @@ class Rybbit {
   RybbitLifecycleObserver? _lifecycleObserver;
   RybbitErrorHandler? _errorHandler;
   Timer? _flushTimer;
+  Future<void> _storeWork = Future<void>.value();
   final List<TrackPayload> _buffer = [];
   String? _userId;
   Box<String>? _identityBox;
@@ -426,7 +427,35 @@ class Rybbit {
     }
   }
 
-  Future<void> _flushBuffer() async {
+  /// Serializes everything that touches the offline store, so that dispose()
+  /// can wait for it before closing the box.
+  ///
+  /// The flush timer, the lifecycle observer and the connectivity listener all
+  /// start their work without awaiting it. dispose() used to await only its own
+  /// flush and then close the box underneath those, which surfaced in host apps
+  /// as an uncatchable "HiveError: Box has already been closed".
+  ///
+  /// Failures are logged rather than rethrown: nothing here is awaited by the
+  /// host app, so an unhandled error would reach its zone handler and, in a
+  /// Flutter app, be reported as a crash caused by analytics.
+  Future<void> _serialize(Future<void> Function() work) {
+    _storeWork = _storeWork.then((_) {
+      // A timer tick or a connectivity change can queue work while dispose() is
+      // already draining the chain. Running it would only reopen or fail on a
+      // store the caller asked us to let go of.
+      if (_state == RybbitState.disposed) return null;
+
+      return work();
+    }).catchError(
+          (Object error) => _logger.warn('Offline store work failed: $error'),
+        );
+
+    return _storeWork;
+  }
+
+  Future<void> _flushBuffer() => _serialize(_flushOnce);
+
+  Future<void> _flushOnce() async {
     if (_buffer.isEmpty) return;
     final batch = List<TrackPayload>.from(_buffer);
     _buffer.clear();
@@ -445,7 +474,9 @@ class Rybbit {
     }
   }
 
-  Future<void> _drainOfflineStore() async {
+  Future<void> _drainOfflineStore() => _serialize(_drainOfflineStoreOnce);
+
+  Future<void> _drainOfflineStoreOnce() async {
     if (_offlineStore == null) return;
     final events = await _offlineStore!.getAll();
     if (events.isEmpty) return;
@@ -472,12 +503,14 @@ class Rybbit {
 
   /// Flushes pending events, cancels timers, and releases resources.
   Future<void> dispose() async {
-    _state = RybbitState.disposed;
     _flushTimer?.cancel();
     _lifecycleObserver?.unregister();
     _errorHandler?.uninstall();
     _connectivitySubscription?.cancel();
     await _flushBuffer();
+    // Only now: the flush above is the last work the store is meant to do, and
+    // marking the state earlier would make _serialize skip it.
+    _state = RybbitState.disposed;
     if (_transport is RybbitHttpClient) {
       (_transport as RybbitHttpClient).close();
     }
