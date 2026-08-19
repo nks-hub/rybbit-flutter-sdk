@@ -1,3 +1,17 @@
+## 0.3.0
+
+- Send a stable `anonymous_id` with every event and identify call. Without it
+  the server has nothing device-specific to key on and derives `user_id` from a
+  hash of IP + user agent, so one phone becomes a new "user" whenever it changes
+  network or the app is updated — a single user showed up under four different
+  ids in one day. The id is resolved once at `init` (caller-supplied wins, then
+  the persisted one, then a fresh UUID v4) and stored next to the identify id,
+  so the first lifecycle event already carries it.
+- `Rybbit.init(anonymousId: ...)` accepts an id the app already owns, so
+  analytics can be keyed on the same device id the app sends to its own backend.
+  `setAnonymousId()` covers apps that learn their id after init, and
+  `getAnonymousId()` reads it back.
+
 ## 0.2.5
 
 - Fix a crash in the host app when the SDK is disposed while a flush is still

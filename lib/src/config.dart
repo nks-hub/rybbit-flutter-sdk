@@ -9,6 +9,7 @@ class RybbitConfig {
     this.autoTrackErrors = true,
     this.autoUploadIcon = false,
     this.iconAssetPath,
+    this.anonymousId,
     this.globalProperties = const {},
     this.maxOfflineEvents = 1000,
     this.offlineTtlDays = 7,
@@ -37,6 +38,19 @@ class RybbitConfig {
   /// Custom asset path for the icon to upload. If null, uses the default
   /// Android/iOS launcher icon resolution logic.
   final String? iconAssetPath;
+
+  /// Stable per-install id the server hashes into `user_id` instead of the
+  /// IP + user agent fingerprint.
+  ///
+  /// Without it the server has nothing device-specific to key on and falls back
+  /// to hashing the IP, so one phone turns into a new "user" every time it
+  /// switches network or the app is updated. Pass any id the app already keeps
+  /// around (a device hash sent to your own backend, an install UUID) to keep
+  /// analytics and your own records on the same identifier.
+  ///
+  /// When omitted the SDK generates a UUID on first run and persists it. Either
+  /// way the value is stored locally and survives restarts, but not a reinstall.
+  final String? anonymousId;
 
   final Map<String, dynamic> globalProperties;
   final int maxOfflineEvents;

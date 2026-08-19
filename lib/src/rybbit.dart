@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -57,6 +58,7 @@ class Rybbit {
   Future<void> _storeWork = Future<void>.value();
   final List<TrackPayload> _buffer = [];
   String? _userId;
+  String? _anonymousId;
   Box<String>? _identityBox;
   static const _identityBoxName = 'rybbit_identity';
   final Map<String, dynamic> _globalProperties = {};
@@ -81,6 +83,7 @@ class Rybbit {
     bool autoUploadIcon = false,
     String? iconAssetPath,
     String? userAgent,
+    String? anonymousId,
     Map<String, dynamic> globalProperties = const {},
     int maxOfflineEvents = 1000,
     int offlineTtlDays = 7,
@@ -109,6 +112,7 @@ class Rybbit {
       autoTrackErrors: autoTrackErrors,
       autoUploadIcon: autoUploadIcon,
       iconAssetPath: iconAssetPath,
+      anonymousId: anonymousId,
       globalProperties: globalProperties,
       maxOfflineEvents: maxOfflineEvents,
       offlineTtlDays: offlineTtlDays,
@@ -160,6 +164,11 @@ class Rybbit {
       } catch (e) {
         rybbit._logger.warn('Failed to restore userId: $e');
       }
+
+      // Resolve the anonymous id the same way, so the very first lifecycle
+      // event already carries it. A caller-supplied id always wins - the app
+      // may want analytics keyed on an id it also sends to its own backend.
+      rybbit._resolveAnonymousId(anonymousId);
 
       final connectivity = Connectivity();
       rybbit._connectivitySubscription =
@@ -316,6 +325,7 @@ class Rybbit {
     _transport.sendIdentify(IdentifyPayload(
       siteId: _config.siteId,
       userId: userId,
+      anonymousId: _anonymousId,
       traits: traits,
       isNewIdentify: true,
     ));
@@ -332,6 +342,7 @@ class Rybbit {
     _transport.sendIdentify(IdentifyPayload(
       siteId: _config.siteId,
       userId: _userId!,
+      anonymousId: _anonymousId,
       traits: traits,
       isNewIdentify: false,
     ));
@@ -347,6 +358,18 @@ class Rybbit {
 
   String? getUserId() => _userId;
 
+  /// The stable per-install id sent as `anonymous_id`.
+  String? getAnonymousId() => _anonymousId;
+
+  /// Overrides the anonymous id after [init], for apps that only learn their
+  /// device id later. Persisted, so the next launch starts with it.
+  void setAnonymousId(String anonymousId) {
+    if (anonymousId.isEmpty || anonymousId == _anonymousId) return;
+    _anonymousId = anonymousId;
+    _persistAnonymousId(anonymousId);
+    _logger.log('setAnonymousId: $anonymousId');
+  }
+
   // --- Global Properties ---
 
   void setGlobalProperty(String key, dynamic value) {
@@ -358,6 +381,45 @@ class Rybbit {
   }
 
   // --- Private ---
+
+  /// Caller-supplied id wins, then the persisted one, then a fresh UUID.
+  void _resolveAnonymousId(String? supplied) {
+    if (supplied != null && supplied.isNotEmpty) {
+      _anonymousId = supplied;
+      _persistAnonymousId(supplied);
+      return;
+    }
+
+    final persisted = _identityBox?.get('anonymous_id');
+    if (persisted != null && persisted.isNotEmpty) {
+      _anonymousId = persisted;
+      return;
+    }
+
+    final generated = _generateAnonymousId();
+    _anonymousId = generated;
+    _persistAnonymousId(generated);
+    _logger.log('Generated anonymousId: $generated');
+  }
+
+  void _persistAnonymousId(String anonymousId) {
+    try {
+      _identityBox?.put('anonymous_id', anonymousId);
+    } catch (e) {
+      _logger.warn('Failed to persist anonymousId: $e');
+    }
+  }
+
+  /// UUID v4 from the platform CSPRNG - not worth a dependency.
+  String _generateAnonymousId() {
+    final random = Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+    return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
+        '${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20)}';
+  }
 
   void _persistUserId(String userId) {
     try {
@@ -393,6 +455,7 @@ class Rybbit {
       pageTitle: pageTitle ?? _session.currentTitle,
       referrer: _session.referrer,
       userId: _userId,
+      anonymousId: _anonymousId,
       userAgent: _deviceData.userAgent,
       eventName: eventName,
       properties: properties,

@@ -14,6 +14,7 @@ class TrackPayload {
     this.pageTitle,
     this.referrer,
     this.userId,
+    this.anonymousId,
     this.userAgent,
     this.eventName,
     this.properties,
@@ -39,6 +40,7 @@ class TrackPayload {
       pageTitle: json['page_title'] as String?,
       referrer: json['referrer'] as String?,
       userId: json['user_id'] as String?,
+      anonymousId: json['anonymous_id'] as String?,
       userAgent: json['user_agent'] as String?,
       eventName: json['event_name'] as String?,
       properties: json['properties'] != null
@@ -68,6 +70,11 @@ class TrackPayload {
   final String? pageTitle;
   final String? referrer;
   final String? userId;
+
+  /// Stable per-install id; the server hashes it into `user_id` instead of the
+  /// IP + user agent fingerprint.
+  final String? anonymousId;
+
   final String? userAgent;
   final String? eventName;
   final Map<String, dynamic>? properties;
@@ -93,6 +100,7 @@ class TrackPayload {
     if (pageTitle != null) json['page_title'] = pageTitle;
     if (referrer != null) json['referrer'] = referrer;
     if (userId != null) json['user_id'] = userId;
+    if (anonymousId != null) json['anonymous_id'] = anonymousId;
     if (userAgent != null) json['user_agent'] = userAgent;
     if (eventName != null) json['event_name'] = eventName;
     if (properties != null) json['properties'] = jsonEncode(properties);

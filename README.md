@@ -31,6 +31,7 @@ Track screen views, custom events, errors, and user identification from Flutter 
 - **Automatic error tracking** - captures Flutter framework errors, async exceptions, and zone errors
 - **Manual error tracking** - `trackError()` with stack traces and context
 - **User identification** - `identify()` with traits, backfills 30 days
+- **Stable device id** - `anonymous_id` per install, so a changing IP or an app update doesn't split one device into several users
 - **GA4-style typed events** - 23 pre-built methods (e-commerce, auth, engagement, CMS, lead gen)
 - **Persistent offline queue** - Hive-backed, survives app restarts
 - **App lifecycle tracking** - automatic `app_open`, `app_foreground`, `app_background`
@@ -93,6 +94,31 @@ Rybbit.instance.trackError(error, stackTrace);
 // User identification
 Rybbit.instance.identify('user-123', traits: {'plan': 'pro'});
 ```
+
+### Device identity
+
+Every event carries an `anonymous_id`. The server hashes it into `user_id`
+instead of falling back to a hash of IP + user agent, which on mobile changes
+with every network switch and app update and turns one phone into several
+"users".
+
+The SDK generates and persists a UUID on first run, so this works out of the
+box. Pass your own id when the app already has one — a device hash it sends to
+its own backend, an install UUID — and analytics stays on the same identifier
+as your own records:
+
+```dart
+await Rybbit.init(
+  host: 'https://analytics.example.com',
+  siteId: 'my-site',
+  anonymousId: myDeviceHash,
+);
+
+// or later, if the id isn't known at init
+Rybbit.instance.setAnonymousId(myDeviceHash);
+```
+
+The id survives restarts, but not a reinstall.
 
 ## Documentation
 

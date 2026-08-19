@@ -70,6 +70,7 @@ void main() {
     bool dryRun = false,
     bool autoTrackLifecycle = false,
     bool autoTrackErrors = false,
+    String? anonymousId,
   }) async {
     await Rybbit.init(
       host: 'https://test.example.com',
@@ -78,6 +79,7 @@ void main() {
       dryRun: dryRun,
       autoTrackLifecycle: autoTrackLifecycle,
       autoTrackErrors: autoTrackErrors,
+      anonymousId: anonymousId,
       flushThreshold: 1,
       transport: mockTransport,
       deviceInfoProvider: MockDeviceInfo(),
@@ -172,6 +174,72 @@ void main() {
       expect(e.eventName, 'FormatException');
       expect(e.properties!['message'], contains('bad input'));
       expect(e.properties!.containsKey('stack'), true);
+    });
+  });
+
+  group('anonymous id', () {
+    test('supplied id rides along on every event', () async {
+      await initRybbit(anonymousId: 'device-hash-9999');
+      Rybbit.instance.event('tap');
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      expect(Rybbit.instance.getAnonymousId(), 'device-hash-9999');
+      expect(mockTransport.sentEvents.first.anonymousId, 'device-hash-9999');
+      expect(mockTransport.sentEvents.first.toJson()['anonymous_id'],
+          'device-hash-9999');
+    });
+
+    test('generates a UUID when none is supplied', () async {
+      await initRybbit();
+      final generated = Rybbit.instance.getAnonymousId();
+
+      expect(generated, isNotNull);
+      expect(
+        generated,
+        matches(RegExp(
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')),
+      );
+    });
+
+    test('keeps the generated id across restarts', () async {
+      await initRybbit();
+      final first = Rybbit.instance.getAnonymousId();
+
+      await Rybbit.reset();
+      await initRybbit();
+
+      expect(Rybbit.instance.getAnonymousId(), first);
+    });
+
+    test('supplied id wins over the persisted one', () async {
+      await initRybbit();
+      final generated = Rybbit.instance.getAnonymousId();
+
+      await Rybbit.reset();
+      await initRybbit(anonymousId: 'device-hash-9999');
+
+      expect(Rybbit.instance.getAnonymousId(), 'device-hash-9999');
+      expect(Rybbit.instance.getAnonymousId(), isNot(generated));
+    });
+
+    test('setAnonymousId overrides and survives a restart', () async {
+      await initRybbit();
+      Rybbit.instance.setAnonymousId('late-device-hash');
+
+      await Rybbit.reset();
+      await initRybbit();
+
+      expect(Rybbit.instance.getAnonymousId(), 'late-device-hash');
+    });
+
+    test('identify carries the anonymous id', () async {
+      await initRybbit(anonymousId: 'device-hash-9999');
+      Rybbit.instance.identify('user-1');
+
+      expect(mockTransport.sentIdentifies.first.anonymousId,
+          'device-hash-9999');
+      expect(mockTransport.sentIdentifies.first.toJson()['anonymous_id'],
+          'device-hash-9999');
     });
   });
 
