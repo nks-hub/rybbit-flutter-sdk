@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Allow `package_info_plus` 10 (unblocks `win32` 6 for apps using `device_info_plus` 13, `share_plus` 13, `flutter_secure_storage` 11)
+
 ## 0.3.0
 
 - Send a stable `anonymous_id` with every event and identify call. Without it
