@@ -7,22 +7,22 @@
 [![iOS](https://img.shields.io/badge/iOS-12+-000000?logo=apple&logoColor=white)](#requirements)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
-> Flutter SDK for [Rybbit](https://github.com/rybbit-io/rybbit), the open-source, privacy-friendly web analytics — track screen views, custom events, errors, and user identification from Flutter apps on all platforms.
+> Flutter SDK for [Rybbit](https://github.com/rybbit-io/rybbit), the open-source web analytics. It tracks screen views, custom events, errors and user identity from Flutter apps on Android, iOS, macOS, Windows, Linux and Web.
 
 ## Features
 
-- 📱 **Screen view tracking** - automatic via `NavigatorObserver` or manual
-- 🎯 **Custom events** - with typed properties
-- 🐛 **Automatic error tracking** - captures Flutter framework errors, async exceptions, and zone errors
+- 📱 **Screen view tracking** - Through `NavigatorObserver` or by calling `screenView()`
+- 🎯 **Custom events** - With typed properties
+- 🐛 **Automatic error tracking** - Captures Flutter framework errors, async exceptions, and zone errors
 - 🧾 **Manual error tracking** - `trackError()` with stack traces and context
 - 👤 **User identification** - `identify()` with traits, backfills 30 days
-- 🔑 **Stable device id** - `anonymous_id` per install, so a changing IP or an app update doesn't split one device into several users
-- 🛒 **GA4-style typed events** - 23 pre-built methods (e-commerce, auth, engagement, CMS, lead gen)
-- 💾 **Persistent offline queue** - Hive-backed, survives app restarts
-- 🔄 **App lifecycle tracking** - automatic `app_open`, `app_foreground`, `app_background`
-- 📶 **Connectivity monitoring** - auto-drains offline queue when back online
-- 🖼️ **App icon upload** - optionally uploads the app icon to the Rybbit dashboard (`autoUploadIcon`, off by default)
-- 🌍 **All platforms** - Android, iOS, macOS, Windows, Linux, Web
+- 🔑 **Stable device id** - One `anonymous_id` per install, so a changing IP or an app update doesn't split one device into several users
+- 🛒 **GA4-style typed events** - 23 methods (e-commerce, auth, engagement, CMS, lead gen)
+- 💾 **Persistent offline queue** - Stored in Hive, kept across app restarts
+- 🔄 **App lifecycle tracking** - Sends `app_open`, `app_foreground`, `app_background`
+- 📶 **Connectivity monitoring** - Sends the offline queue when the device is back online
+- 🖼️ **App icon upload** - Uploads the app icon to the Rybbit dashboard (`autoUploadIcon`, off by default)
+- 🌍 **Platforms** - Android, iOS, macOS, Windows, Linux, Web
 
 ## Requirements
 
@@ -53,7 +53,7 @@ dependencies:
 
 ## Usage
 
-### Quick Start
+### Quick start
 
 ```dart
 import 'package:flutter/material.dart';
@@ -97,10 +97,9 @@ instead of falling back to a hash of IP + user agent, which on mobile changes
 with every network switch and app update and turns one phone into several
 "users".
 
-The SDK generates and persists a UUID on first run, so this works out of the
-box. Pass your own id when the app already has one — a device hash it sends to
-its own backend, an install UUID — and analytics stays on the same identifier
-as your own records:
+The SDK generates and stores a UUID on first run. When the app already has its
+own id, such as a device hash it sends to its backend or an install UUID, pass
+it in and analytics uses the same identifier as your records:
 
 ```dart
 await Rybbit.init(
@@ -117,11 +116,11 @@ The id survives restarts, but not a reinstall.
 
 ## Documentation
 
-- **[API Reference](doc/api.md)** - Complete API documentation for all classes, methods, and configuration options
-- **[Examples](doc/examples.md)** - Practical usage examples: setup, navigation, e-commerce, error handling, testing, and more
+- **[API reference](doc/api.md)** - Classes, methods and configuration options
+- **[Examples](doc/examples.md)** - Setup, navigation, e-commerce, error handling, testing
 - **[Changelog](CHANGELOG.md)**
 
-## Related Projects
+## Related projects
 
 - [Rybbit](https://github.com/rybbit-io/rybbit) - Open-source web analytics platform
 - [@nks-hub/rybbit-ts](https://github.com/nks-hub/rybbit-ts) - TypeScript SDK for web
