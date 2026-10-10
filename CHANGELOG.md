@@ -1,3 +1,14 @@
+## 0.4.0
+
+- Works against a stock Rybbit server, not just one with mobile-platform
+  support. Upstream validates `/api/track` strictly and answers 400 to a field
+  it does not know, so every event carrying `app_version` or `device_model` was
+  dropped. The transport now retries such an event without those two fields and,
+  once a server has refused them, leaves them out for the rest of the session.
+  Nothing to configure: apps already shipping this SDK get it by upgrading.
+  Against a server that does support them the payload is unchanged, so no app
+  loses the app version or device model it reports today.
+
 ## 0.3.1
 
 - Allow `package_info_plus` 10 (unblocks `win32` 6 for apps using `device_info_plus` 13, `share_plus` 13, `flutter_secure_storage` 11)

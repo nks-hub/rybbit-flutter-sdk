@@ -28,7 +28,14 @@
 
 - Flutter >= 3.10.0
 - Dart >= 3.0.0
-- Rybbit server with [PR #921](https://github.com/rybbit-io/rybbit/pull/921) merged (adds `identified_user_id` and traits to funnel step sessions)
+- Any Rybbit server, self-hosted or cloud
+
+`/api/track` on a stock Rybbit rejects fields it does not know, so the SDK
+detects that on its first event and stops sending `app_version` and
+`device_model`; everything else is reported as usual. A server with
+[PR #921](https://github.com/rybbit-io/rybbit/pull/921) merged keeps both, and
+the app version and device model then show up in sessions and filters. The
+switch is automatic - there is nothing to configure either way.
 
 Dependencies: [http](https://pub.dev/packages/http) | [device_info_plus](https://pub.dev/packages/device_info_plus) | [package_info_plus](https://pub.dev/packages/package_info_plus) | [connectivity_plus](https://pub.dev/packages/connectivity_plus) | [hive](https://pub.dev/packages/hive) | [path_provider](https://pub.dev/packages/path_provider)
 
