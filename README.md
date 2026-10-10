@@ -1,43 +1,36 @@
-<h1 align="center">rybbit_flutter_sdk</h1>
+# Rybbit Flutter SDK
 
-<p align="center">
-  Flutter SDK for <a href="https://github.com/rybbit-io/rybbit">Rybbit</a> — open-source, privacy-friendly web analytics.
-</p>
+[![pub.dev](https://img.shields.io/pub/v/rybbit_flutter_sdk.svg)](https://pub.dev/packages/rybbit_flutter_sdk)
+[![Flutter](https://img.shields.io/badge/Flutter-3.10+-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Android](https://img.shields.io/badge/Android-5.0+-3DDC84?logo=android&logoColor=white)](#requirements)
+[![iOS](https://img.shields.io/badge/iOS-12+-000000?logo=apple&logoColor=white)](#requirements)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
-<p align="center">
-  <a href="https://pub.dev/packages/rybbit_flutter_sdk"><img src="https://img.shields.io/pub/v/rybbit_flutter_sdk?color=22c55e" alt="pub.dev"></a>
-  <a href="https://github.com/nks-hub/rybbit-flutter-sdk/stargazers"><img src="https://img.shields.io/github/stars/nks-hub/rybbit-flutter-sdk?style=flat&color=22c55e" alt="Stars"></a>
-  <a href="https://github.com/nks-hub/rybbit-flutter-sdk/network/members"><img src="https://img.shields.io/github/forks/nks-hub/rybbit-flutter-sdk?style=flat&color=3b82f6" alt="Forks"></a>
-  <a href="https://github.com/nks-hub/rybbit-flutter-sdk/issues"><img src="https://img.shields.io/github/issues/nks-hub/rybbit-flutter-sdk?style=flat&color=f59e0b" alt="Issues"></a>
-  <a href="https://github.com/nks-hub/rybbit-flutter-sdk/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nks-hub/rybbit-flutter-sdk?style=flat&color=64748b" alt="License"></a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Flutter-3.10+-02569B?logo=flutter&logoColor=white" alt="Flutter">
-  <img src="https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart&logoColor=white" alt="Dart">
-  <img src="https://img.shields.io/badge/Android-5.0+-3DDC84?logo=android&logoColor=white" alt="Android">
-  <img src="https://img.shields.io/badge/iOS-12+-000000?logo=apple&logoColor=white" alt="iOS">
-  <img src="https://img.shields.io/badge/offline--first-Hive-orange" alt="Offline-first">
-</p>
-
----
-
-Track screen views, custom events, errors, and user identification from Flutter apps on all platforms.
+> Flutter SDK for [Rybbit](https://github.com/rybbit-io/rybbit), the open-source, privacy-friendly web analytics — track screen views, custom events, errors, and user identification from Flutter apps on all platforms.
 
 ## Features
 
-- **Screen view tracking** - automatic via `NavigatorObserver` or manual
-- **Custom events** - with typed properties
-- **Automatic error tracking** - captures Flutter framework errors, async exceptions, and zone errors
-- **Manual error tracking** - `trackError()` with stack traces and context
-- **User identification** - `identify()` with traits, backfills 30 days
-- **Stable device id** - `anonymous_id` per install, so a changing IP or an app update doesn't split one device into several users
-- **GA4-style typed events** - 23 pre-built methods (e-commerce, auth, engagement, CMS, lead gen)
-- **Persistent offline queue** - Hive-backed, survives app restarts
-- **App lifecycle tracking** - automatic `app_open`, `app_foreground`, `app_background`
-- **Connectivity monitoring** - auto-drains offline queue when back online
-- **Auto icon upload** - automatically uploads app icon to Rybbit dashboard
-- **All platforms** - Android, iOS, macOS, Windows, Linux, Web
+- 📱 **Screen view tracking** - automatic via `NavigatorObserver` or manual
+- 🎯 **Custom events** - with typed properties
+- 🐛 **Automatic error tracking** - captures Flutter framework errors, async exceptions, and zone errors
+- 🧾 **Manual error tracking** - `trackError()` with stack traces and context
+- 👤 **User identification** - `identify()` with traits, backfills 30 days
+- 🔑 **Stable device id** - `anonymous_id` per install, so a changing IP or an app update doesn't split one device into several users
+- 🛒 **GA4-style typed events** - 23 pre-built methods (e-commerce, auth, engagement, CMS, lead gen)
+- 💾 **Persistent offline queue** - Hive-backed, survives app restarts
+- 🔄 **App lifecycle tracking** - automatic `app_open`, `app_foreground`, `app_background`
+- 📶 **Connectivity monitoring** - auto-drains offline queue when back online
+- 🖼️ **App icon upload** - optionally uploads the app icon to the Rybbit dashboard (`autoUploadIcon`, off by default)
+- 🌍 **All platforms** - Android, iOS, macOS, Windows, Linux, Web
+
+## Requirements
+
+- Flutter >= 3.10.0
+- Dart >= 3.0.0
+- Rybbit server with [PR #921](https://github.com/rybbit-io/rybbit/pull/921) merged (adds `identified_user_id` and traits to funnel step sessions)
+
+Dependencies: [http](https://pub.dev/packages/http) | [device_info_plus](https://pub.dev/packages/device_info_plus) | [package_info_plus](https://pub.dev/packages/package_info_plus) | [connectivity_plus](https://pub.dev/packages/connectivity_plus) | [hive](https://pub.dev/packages/hive) | [path_provider](https://pub.dev/packages/path_provider)
 
 ## Installation
 
@@ -45,7 +38,7 @@ Track screen views, custom events, errors, and user identification from Flutter 
 
 ```yaml
 dependencies:
-  rybbit_flutter_sdk: ^0.2.0
+  rybbit_flutter_sdk: ^0.3.0
 ```
 
 ### From Git
@@ -58,7 +51,9 @@ dependencies:
       ref: main
 ```
 
-## Quick Start
+## Usage
+
+### Quick Start
 
 ```dart
 import 'package:flutter/material.dart';
@@ -124,45 +119,44 @@ The id survives restarts, but not a reinstall.
 
 - **[API Reference](doc/api.md)** - Complete API documentation for all classes, methods, and configuration options
 - **[Examples](doc/examples.md)** - Practical usage examples: setup, navigation, e-commerce, error handling, testing, and more
+- **[Changelog](CHANGELOG.md)**
 
-## Requirements
-
-- Flutter >= 3.10.0
-- Dart >= 3.0.0
-- Rybbit server with [PR #921](https://github.com/rybbit-io/rybbit/pull/921) merged (adds `identified_user_id` and traits to funnel step sessions)
-
-## Dependencies
-
-[http](https://pub.dev/packages/http) | [device_info_plus](https://pub.dev/packages/device_info_plus) | [package_info_plus](https://pub.dev/packages/package_info_plus) | [connectivity_plus](https://pub.dev/packages/connectivity_plus) | [hive](https://pub.dev/packages/hive) | [path_provider](https://pub.dev/packages/path_provider)
-
-## Related
+## Related Projects
 
 - [Rybbit](https://github.com/rybbit-io/rybbit) - Open-source web analytics platform
 - [@nks-hub/rybbit-ts](https://github.com/nks-hub/rybbit-ts) - TypeScript SDK for web
 - [rybbit-app](https://github.com/nks-hub/rybbit-app) - Flutter dashboard for Rybbit
+- [@nks-hub/rybbit-mcp](https://github.com/nks-hub/rybbit-mcp) - MCP server for querying Rybbit from AI assistants
+
+## Testing
+
+```bash
+flutter pub get
+flutter analyze
+flutter test
+```
 
 ## Contributing
 
-Contributions welcome! Please open an issue or pull request.
+Contributions are welcome! For major changes, please open an issue first.
 
-1. Fork the repo
+1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes
-4. Push to the branch
+3. Commit your changes (`git commit -m 'feat: description'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## Support
+
+- 📧 **Email:** dev@nks-hub.cz
+- 🐛 **Bug reports:** [GitHub Issues](https://github.com/nks-hub/rybbit-flutter-sdk/issues)
 
 ## License
 
-GNU General Public License v3.0 - see [LICENSE](LICENSE).
+GNU General Public License v3.0 — see [LICENSE](LICENSE) for details.
 
 ---
 
 <p align="center">
-  Developed by <a href="https://nks-hub.cz">NKS Hub</a> | <a href="mailto:dev@nks-hub.cz">dev@nks-hub.cz</a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/nks-hub/rybbit-flutter-sdk">
-    <img src="https://img.shields.io/badge/Give_a-⭐-yellow?style=for-the-badge" alt="Star this repo">
-  </a>
+  Made with ❤️ by <a href="https://github.com/nks-hub">NKS Hub</a>
 </p>
