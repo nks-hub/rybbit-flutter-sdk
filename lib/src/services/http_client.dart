@@ -29,14 +29,47 @@ class RybbitHttpClient implements RybbitTransport {
 
   static const _timeout = Duration(seconds: 15);
 
+  /// Set once a server has rejected app_version/device_model, so the rest of
+  /// the session skips straight to the payload it accepts.
+  bool _serverRejectsNativeFields = false;
+
+  /// Whether this host turned out to run a Rybbit without mobile support.
+  bool get serverRejectsNativeFields => _serverRejectsNativeFields;
+
+  Future<http.Response> _postEvent(Map<String, dynamic> json) {
+    return _client.post(
+      Uri.parse('$host/api/track'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(json),
+    ).timeout(_timeout);
+  }
+
   @override
   Future<bool> sendEvent(TrackPayload payload) async {
     try {
-      final response = await _client.post(
-        Uri.parse('$host/api/track'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(payload.toJson()),
-      ).timeout(_timeout);
+      final json = payload.toJson();
+      final native = TrackPayload.nativeFields.where(json.containsKey).toList();
+      if (_serverRejectsNativeFields) {
+        json.removeWhere((key, _) => TrackPayload.nativeFields.contains(key));
+      }
+
+      var response = await _postEvent(json);
+
+      // Upstream Rybbit validates the payload strictly and answers 400 to a
+      // field it does not know, dropping the event. Retry without the mobile
+      // fields; if that lands, the server is a plain upstream build and every
+      // later event skips them.
+      if (response.statusCode == 400 && !_serverRejectsNativeFields && native.isNotEmpty) {
+        json.removeWhere((key, _) => TrackPayload.nativeFields.contains(key));
+        final retry = await _postEvent(json);
+        if (retry.statusCode == 200) {
+          _serverRejectsNativeFields = true;
+          _log('server does not accept ${native.join(", ")} - sending events without them');
+          return true;
+        }
+        response = retry;
+      }
+
       if (response.statusCode != 200) {
         _log('sendEvent failed: ${response.statusCode} ${response.body}');
       }

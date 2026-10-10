@@ -113,4 +113,11 @@ class TrackPayload {
     if (deviceModel != null) json['device_model'] = deviceModel;
     return json;
   }
+
+  /// Fields only a Rybbit server with mobile-platform support understands.
+  ///
+  /// The upstream /api/track schema is strict: it rejects the whole event if it
+  /// carries a field it does not know. The transport strips these and retries
+  /// when a server turns out not to accept them.
+  static const nativeFields = {'app_version', 'device_model'};
 }
