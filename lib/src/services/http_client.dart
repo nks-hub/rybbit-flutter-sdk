@@ -36,10 +36,22 @@ class RybbitHttpClient implements RybbitTransport {
   /// Whether this host turned out to run a Rybbit without mobile support.
   bool get serverRejectsNativeFields => _serverRejectsNativeFields;
 
+  /// A server only trusts `user_agent` from the payload when the request is
+  /// authenticated as server-side ingestion. Without that it classifies the
+  /// device from the request header, so send the same string both ways - on
+  /// web the browser owns the header and drops ours, which is correct there.
+  Map<String, String> _headers(String? userAgent) {
+    final headers = {'Content-Type': 'application/json'};
+    if (userAgent != null && userAgent.isNotEmpty) {
+      headers['User-Agent'] = userAgent;
+    }
+    return headers;
+  }
+
   Future<http.Response> _postEvent(Map<String, dynamic> json) {
     return _client.post(
       Uri.parse('$host/api/track'),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers(json['user_agent'] as String?),
       body: jsonEncode(json),
     ).timeout(_timeout);
   }
@@ -83,10 +95,11 @@ class RybbitHttpClient implements RybbitTransport {
   @override
   Future<bool> sendIdentify(IdentifyPayload payload) async {
     try {
+      final json = payload.toJson();
       final response = await _client.post(
         Uri.parse('$host/api/identify'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(payload.toJson()),
+        headers: _headers(json['user_agent'] as String?),
+        body: jsonEncode(json),
       ).timeout(_timeout);
       return response.statusCode == 200;
     } catch (_) {

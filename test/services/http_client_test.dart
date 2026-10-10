@@ -33,6 +33,26 @@ void main() {
       expect(capturedBody!['site_id'], 'test-site');
     });
 
+    test('sends the device user agent as a request header', () async {
+      String? headerUa;
+      final mockClient = MockClient((request) async {
+        headerUa = request.headers['user-agent'];
+        return http.Response('{"success":true}', 200);
+      });
+      final client = RybbitHttpClient(
+        host: 'https://test.example.com',
+        client: mockClient,
+      );
+
+      await client.sendEvent(TrackPayload(
+        type: EventType.pageview,
+        siteId: 'test-site',
+        userAgent: 'ExampleApp/1.0.0 (com.example.app; Android 14; Pixel 8) RybbitFlutter/0.4.1',
+      ));
+
+      expect(headerUa, contains('Android 14'));
+    });
+
     test('retries without the mobile fields when the server rejects them', () async {
       final bodies = <Map<String, dynamic>>[];
       final mockClient = MockClient((request) async {

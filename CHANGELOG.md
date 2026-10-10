@@ -1,3 +1,12 @@
+## 0.4.1
+
+- Send the device user agent as a request header, not only in the payload. A
+  Rybbit server only trusts the payload's `user_agent` for authenticated
+  server-side ingestion; otherwise it classifies the device from the header. An
+  app reporting to a stock server therefore landed with no browser and no
+  operating system recorded. The header carries the same string the SDK already
+  built, so nothing changes for a server that reads the payload.
+
 ## 0.4.0
 
 - Works against a stock Rybbit server, not just one with mobile-platform
